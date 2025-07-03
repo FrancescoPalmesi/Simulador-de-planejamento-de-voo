@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Planejamento de Voo VFR</title>
+    <!-- Ensure Leaflet CSS loads first and with integrity/crossorigin attributes -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" 
+          integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-icon">
+                    <svg class="plane-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4s-2 1-3.5 2.5L11 10l-8.2-1.8c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12.5l-2.5 2.5L5 14l-1.5 1.5L6 18l2.5-2.5L12.5 9l1.8 7.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1Z"/>
+                    </svg>
+                </div>
+                <h1 class="header-title">Simulador VFR</h1>
+                <!-- Theme Toggle Button -->
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                    <svg class="theme-icon sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/>
+                        <line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                    <svg class="theme-icon moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button>
+            </div>
+            <p class="header-subtitle">
+                Planeje facilmente seu voo visual com seleções no mapa e cálculos automáticos
+            </p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Map Section -->
+            <section class="map-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-header-content">
+                            <div class="card-title-group">
+                                <h2 class="card-title">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+                                    </svg>
+                                    Mapa Interativo
+                                </h2>
+                                <p class="card-description">
+                                    Clique no mapa para selecionar pontos de decolagem e pouso. Duplo clique para limpar.
+                                </p>
+                            </div>
+                            <!-- Map Expand/Collapse Button -->
+                            <button class="map-toggle" id="map-toggle" aria-label="Expandir/Recolher mapa">
+                                <svg class="map-toggle-icon expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="15,3 21,3 21,9"/>
+                                    <polyline points="9,21 3,21 3,15"/>
+                                    <line x1="21" y1="3" x2="14" y2="10"/>
+                                    <line x1="3" y1="21" x2="10" y2="14"/>
+                                </svg>
+                                <svg class="map-toggle-icon collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="4,14 10,14 10,20"/>
+                                    <polyline points="20,10 14,10 14,4"/>
+                                    <line x1="14" y1="10" x2="21" y2="3"/>
+                                    <line x1="3" y1="21" x2="10" y2="14"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div id="map" class="map">
+                            <div id="map-loading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 400; background: rgba(255,255,255,0.8); padding: 10px; border-radius: 5px; display: none;">
+                                Carregando mapa...
+                            </div>
+                        </div>
+                        <div class="map-controls">
+                            <div class="badges">
+                                <span class="badge" id="departure-badge">
+                                    <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                        <circle cx="12" cy="10" r="3"/>
+                                    </svg>
+                                    Decolagem
+                                </span>
+                                <span class="badge" id="landing-badge">
+                                    <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                        <circle cx="12" cy="10" r="3"/>
+                                    </svg>
+                                    Pouso
+                                </span>
+                            </div>
+                            <button class="btn btn-outline" id="reset-btn">
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                                    <path d="M21 3v5h-5"/>
+                                    <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                                    <path d="M3 21v-5h5"/>
+                                </svg>
+                                Limpar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Controls and Results Grid -->
+            <div class="grid">
+                <!-- Flight Parameters -->
+                <section class="parameters-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="14" rx="2" ry="2"/>
+                                    <line x1="8" y1="21" x2="16" y2="21"/>
+                                    <line x1="12" y1="17" x2="12" y2="21"/>
+                                </svg>
+                                Parâmetros de Voo
+                            </h2>
+                        </div>
+                        <div class="card-content">
+                            <form class="form" id="flight-form">
+                                <div class="form-group">
+                                    <label for="departure-coordinates" class="form-label">Decolagem (Lat, Lng)</label>
+                                    <input type="text" id="departure-coordinates" class="form-input" placeholder="-23.5489, -46.6388">
+                                </div>
+                                <div class="form-group">
+                                    <label for="landing-coordinates" class="form-label">Pouso (Lat, Lng)</label>
+                                    <input type="text" id="landing-coordinates" class="form-input" placeholder="-22.9083, -43.1964">
+                                </div>
+                                <div class="form-group">
+                                    <label for="airspeed" class="form-label">Velocidade Média (km/h)</label>
+                                    <input type="number" id="airspeed" class="form-input" value="150">
+                                </div>
+                                <div class="form-group">
+                                    <label for="fuel-burn" class="form-label">Consumo de Combustível (L/h)</label>
+                                    <input type="number" id="fuel-burn" class="form-input" value="20">
+                                </div>
+                                <button type="button" id="calculate-btn" class="btn btn-primary btn-large">
+                                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="14" rx="2" ry="2"/>
+                                        <line x1="8" y1="21" x2="16" y2="21"/>
+                                        <line x1="12" y1="17" x2="12" y2="21"/>
+                                    </svg>
+                                    <span class="btn-text">Calcular Planejamento</span>
+                                    <div class="loading-spinner" style="display: none;"></div>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Results -->
+                <section class="results-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4s-2 1-3.5 2.5L11 10l-8.2-1.8c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12.5l-2.5 2.5L5 14l-1.5 1.5L6 18l2.5-2.5L12.5 9l1.8 7.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1Z"/>
+                                </svg>
+                                Resultados do Planejamento
+                            </h2>
+                        </div>
+                        <div class="card-content">
+                            <div id="error-message" class="alert alert-error" style="display: none;">
+                                <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="15" y1="9" x2="9" y2="15"/>
+                                    <line x1="9" y1="9" x2="15" y2="15"/>
+                                </svg>
+                                <span class="alert-text"></span>
+                            </div>
+
+                            <div id="results-content">
+                                <div id="results-data" style="display: none;">
+                                    <div class="result-item result-distance">
+                                        <div class="result-label">
+                                            <svg class="result-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+                                            </svg>
+                                            <span>Distância</span>
+                                        </div>
+                                        <span class="result-value" id="distance-value">-</span>
+                                    </div>
+
+                                    <div class="result-item result-time">
+                                        <div class="result-label">
+                                            <svg class="result-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="12" cy="12" r="10"/>
+                                                <polyline points="12,6 12,12 16,14"/>
+                                            </svg>
+                                            <span>Tempo de Voo</span>
+                                        </div>
+                                        <span class="result-value" id="time-value">-</span>
+                                    </div>
+
+                                    <div class="result-item result-fuel">
+                                        <div class="result-label">
+                                            <svg class="result-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <line x1="3" y1="22" x2="21" y2="22"/>
+                                                <line x1="6" y1="18" x2="6" y2="11"/>
+                                                <line x1="10" y1="18" x2="10" y2="11"/>
+                                                <line x1="14" y1="18" x2="14" y2="11"/>
+                                                <line x1="18" y1="18" x2="18" y2="11"/>
+                                                <polygon points="12 2 15.09 8.26 22 9 17 14.74 18.18 21.02 12 17.77 5.82 21.02 7 14.74 2 9 8.91 8.26 12 2"/>
+                                            </svg>
+                                            <span>Combustível</span>
+                                        </div>
+                                        <span class="result-value" id="fuel-value">-</span>
+                                    </div>
+
+                                    <div class="result-item result-wind">
+                                        <div class="result-label">
+                                            <svg class="result-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/>
+                                                <path d="M9.6 4.6A2 2 0 1 1 11 8H2"/>
+                                                <path d="M12.6 19.4A2 2 0 1 0 14 16H2"/>
+                                            </svg>
+                                            <span>Vento</span>
+                                        </div>
+                                        <span class="result-value" id="wind-value">-</span>
+                                    </div>
+                                </div>
+
+                                <div id="results-placeholder">
+                                    <div class="placeholder-content">
+                                        <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4s-2 1-3.5 2.5L11 10l-8.2-1.8c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12.5l-2.5 2.5L5 14l-1.5 1.5L6 18l2.5-2.5L12.5 9l1.8 7.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1Z"/>
+                                        </svg>
+                                        <p>Selecione os pontos no mapa e clique em calcular para ver os resultados</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Instructions -->
+            <section class="instructions-section">
+                <div class="card">
+                    <div class="card-content">
+                        <div class="instructions-grid">
+                            <div class="instruction-item">
+                                <div class="instruction-icon instruction-icon-blue">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                        <circle cx="12" cy="10" r="3"/>
+                                    </svg>
+                                </div>
+                                <div class="instruction-content">
+                                    <h3 class="instruction-title">1. Selecione Pontos</h3>
+                                    <p class="instruction-text">Clique no mapa para marcar decolagem e pouso</p>
+                                </div>
+                            </div>
+                            <div class="instruction-item">
+                                <div class="instruction-icon instruction-icon-green">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="14" rx="2" ry="2"/>
+                                        <line x1="8" y1="21" x2="16" y2="21"/>
+                                        <line x1="12" y1="17" x2="12" y2="21"/>
+                                    </svg>
+                                </div>
+                                <div class="instruction-content">
+                                    <h3 class="instruction-title">2. Configure Parâmetros</h3>
+                                    <p class="instruction-text">Ajuste velocidade e consumo da aeronave</p>
+                                </div>
+                            </div>
+                            <div class="instruction-item">
+                                <div class="instruction-icon instruction-icon-orange">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4s-2 1-3.5 2.5L11 10l-8.2-1.8c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12.5l-2.5 2.5L5 14l-1.5 1.5L6 18l2.5-2.5L12.5 9l1.8 7.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1Z"/>
+                                    </svg>
+                                </div>
+                                <div class="instruction-content">
+                                    <h3 class="instruction-title">3. Calcule o Voo</h3>
+                                    <p class="instruction-text">Obtenha distância, tempo e consumo estimados</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="footer-text">
+                Designed & Developed by 
+                <a href="https://francescoportfolio.netlify.app/" target="_blank" rel="noopener noreferrer" class="footer-link">
+                    Francesco Palmesi
+                </a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" 
+        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+        crossorigin="anonymous"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
