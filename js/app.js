@@ -29,9 +29,69 @@ const mapToggle = document.getElementById("map-toggle")
 const mapSection = document.querySelector(".map-section")
 
 // Navigation elements
-const navLeft = document.getElementById("nav-left")
-const navRight = document.getElementById("nav-right")
+const hamburgerToggle = document.getElementById("hamburger-toggle")
+const hamburgerNav = document.getElementById("hamburger-nav")
+const navOverlay = document.getElementById("nav-overlay")
+const navClose = document.getElementById("nav-close")
+const navFlightPlanner = document.getElementById("nav-flight-planner")
+const navSeatCalculator = document.getElementById("nav-seat-calculator")
 const appContainer = document.querySelector(".app-container")
+
+// Remove old navigation variables
+// const navLeft = document.getElementById("nav-left")
+// const navRight = document.getElementById("nav-right")
+
+// Hamburger menu functionality
+function toggleHamburgerMenu() {
+  const isActive = hamburgerNav.classList.contains("active")
+
+  if (isActive) {
+    closeHamburgerMenu()
+  } else {
+    openHamburgerMenu()
+  }
+}
+
+function openHamburgerMenu() {
+  hamburgerNav.classList.add("active")
+  hamburgerToggle.classList.add("active")
+  document.body.style.overflow = "hidden"
+  updateActiveNavLink()
+}
+
+function closeHamburgerMenu() {
+  hamburgerNav.classList.remove("active")
+  hamburgerToggle.classList.remove("active")
+  document.body.style.overflow = ""
+}
+
+function updateActiveNavLink() {
+  // Remove active class from all nav links
+  document.querySelectorAll(".nav-link").forEach((link) => {
+    link.classList.remove("active")
+  })
+
+  // Add active class to current page
+  if (currentPage === "flight-planner") {
+    navFlightPlanner.classList.add("active")
+  } else {
+    navSeatCalculator.classList.add("active")
+  }
+}
+
+// Navigation between pages (updated)
+function navigateToPage(page) {
+  currentPage = page
+
+  if (page === "seat-calculator") {
+    appContainer.classList.add("slide-left")
+  } else {
+    appContainer.classList.remove("slide-left")
+  }
+
+  updateActiveNavLink()
+  closeHamburgerMenu()
+}
 
 // Seat calculator elements
 const aircraftRows = document.getElementById("aircraft-rows")
@@ -66,21 +126,6 @@ function toggleTheme() {
 
   document.documentElement.setAttribute("data-theme", newTheme)
   localStorage.setItem("vfr-theme", newTheme)
-}
-
-// Navigation between pages
-function navigateToPage(page) {
-  currentPage = page
-
-  if (page === "seat-calculator") {
-    appContainer.classList.add("slide-left")
-    navLeft.style.display = "none"
-    navRight.style.display = "block"
-  } else {
-    appContainer.classList.remove("slide-left")
-    navLeft.style.display = "block"
-    navRight.style.display = "none"
-  }
 }
 
 // Map expand/collapse functionality
@@ -575,14 +620,41 @@ document.addEventListener("DOMContentLoaded", () => {
   // Wait for Leaflet to be available
   waitForLeafletAndInit()
 
-  // Set up navigation event listeners
-  if (navLeft) {
-    navLeft.addEventListener("click", () => navigateToPage("seat-calculator"))
+  // Set up hamburger menu event listeners
+  if (hamburgerToggle) {
+    hamburgerToggle.addEventListener("click", toggleHamburgerMenu)
   }
 
-  if (navRight) {
-    navRight.addEventListener("click", () => navigateToPage("flight-planner"))
+  if (navOverlay) {
+    navOverlay.addEventListener("click", closeHamburgerMenu)
   }
+
+  if (navClose) {
+    navClose.addEventListener("click", closeHamburgerMenu)
+  }
+
+  if (navFlightPlanner) {
+    navFlightPlanner.addEventListener("click", () => navigateToPage("flight-planner"))
+  }
+
+  if (navSeatCalculator) {
+    navSeatCalculator.addEventListener("click", () => navigateToPage("seat-calculator"))
+  }
+
+  // Close menu on escape key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && hamburgerNav.classList.contains("active")) {
+      closeHamburgerMenu()
+    }
+  })
+
+  // Remove old navigation event listeners
+  // if (navLeft) {
+  //   navLeft.addEventListener("click", () => navigateToPage("seat-calculator"))
+  // }
+  // if (navRight) {
+  //   navRight.addEventListener("click", () => navigateToPage("flight-planner"))
+  // }
 
   // Set up flight planner event listeners
   if (calculateBtn) {
@@ -657,6 +729,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   updateUI()
   updateExportButton()
+  updateActiveNavLink()
 })
 
 // Handle window resize for map (only if map exists)
