@@ -4,6 +4,11 @@ let markers = []
 let isLoading = false
 let mapInitialized = false
 let isMapExpanded = false
+let currentPage = "flight-planner"
+const seatMap = []
+const passengers = []
+let selectedSeat = null
+let aircraftConfig = null
 
 // DOM elements
 const mapElement = document.getElementById("map")
@@ -19,8 +24,26 @@ const errorMessage = document.getElementById("error-message")
 const resultsData = document.getElementById("results-data")
 const resultsPlaceholder = document.getElementById("results-placeholder")
 const themeToggle = document.getElementById("theme-toggle")
+const themeToggleSeats = document.getElementById("theme-toggle-seats")
 const mapToggle = document.getElementById("map-toggle")
 const mapSection = document.querySelector(".map-section")
+
+// Navigation elements
+const navLeft = document.getElementById("nav-left")
+const navRight = document.getElementById("nav-right")
+const appContainer = document.querySelector(".app-container")
+
+// Seat calculator elements
+const aircraftRows = document.getElementById("aircraft-rows")
+const seatConfig = document.getElementById("seat-config")
+const customConfig = document.getElementById("custom-config")
+const customSeats = document.getElementById("custom-seats")
+const generateSeats = document.getElementById("generate-seats")
+const seatMapElement = document.getElementById("seat-map")
+const passengerName = document.getElementById("passenger-name")
+const addPassenger = document.getElementById("add-passenger")
+const passengerList = document.getElementById("passenger-list")
+const exportPdf = document.getElementById("export-pdf")
 
 // Result elements
 const distanceValue = document.getElementById("distance-value")
@@ -45,6 +68,21 @@ function toggleTheme() {
   localStorage.setItem("vfr-theme", newTheme)
 }
 
+// Navigation between pages
+function navigateToPage(page) {
+  currentPage = page
+
+  if (page === "seat-calculator") {
+    appContainer.classList.add("slide-left")
+    navLeft.style.display = "none"
+    navRight.style.display = "block"
+  } else {
+    appContainer.classList.remove("slide-left")
+    navLeft.style.display = "block"
+    navRight.style.display = "none"
+  }
+}
+
 // Map expand/collapse functionality
 function toggleMapSize() {
   isMapExpanded = !isMapExpanded
@@ -61,6 +99,266 @@ function toggleMapSize() {
       map.invalidateSize()
     }
   }, 300)
+}
+
+// Seat configuration management
+function handleSeatConfigChange() {
+  const selectedConfig = seatConfig.value
+
+  if (selectedConfig === "custom") {
+    customConfig.style.display = "block"
+  } else {
+    customConfig.style.display = "none"
+  }
+}
+
+function parseSeatConfiguration(config) {
+  return config.split("-").map((num) => Number.parseInt(num))
+}
+
+function generateSeatMap() {
+  const rows = Number.parseInt(aircraftRows.value)
+  const configValue = seatConfig.value === "custom" ? customSeats.value : seatConfig.value
+
+  if (!configValue || rows < 1) {
+    alert("Por favor, configure corretamente a aeronave")
+    return
+  }
+
+  const seatConfiguration = parseSeatConfiguration(configValue)
+  aircraftConfig = {
+    rows: rows,
+    configuration: seatConfiguration,
+    totalSeatsPerRow: seatConfiguration.reduce((a, b) => a + b, 0),
+  }
+
+  renderSeatMap()
+}
+
+function renderSeatMap() {
+  if (!aircraftConfig) return
+
+  const seatMapHtml = `
+    <div class="seat-map-content">
+      <div class="aircraft-body">
+        <div class="aircraft-nose"></div>
+        ${generateRowsHtml()}
+      </div>
+    </div>
+  `
+
+  seatMapElement.innerHTML = seatMapHtml
+  attachSeatEventListeners()
+}
+
+function generateRowsHtml() {
+  let html = ""
+
+  for (let row = 1; row <= aircraftConfig.rows; row++) {
+    html += `<div class="seat-row">`
+    html += `<div class="row-number">${row}</div>`
+
+    let seatLetter = "A"
+    aircraftConfig.configuration.forEach((groupSize, groupIndex) => {
+      if (groupIndex > 0) {
+        html += `<div class="aisle"></div>`
+      }
+
+      html += `<div class="seat-group">`
+      for (let i = 0; i < groupSize; i++) {
+        const seatId = `${row}${seatLetter}`
+        const isOccupied = passengers.some((p) => p.seat === seatId)
+        html += `<div class="seat ${isOccupied ? "occupied" : ""}" data-seat="${seatId}">${seatLetter}</div>`
+        seatLetter = String.fromCharCode(seatLetter.charCodeAt(0) + 1)
+      }
+      html += `</div>`
+    })
+
+    html += `</div>`
+  }
+
+  return html
+}
+
+function attachSeatEventListeners() {
+  const seats = document.querySelectorAll(".seat")
+  seats.forEach((seat) => {
+    seat.addEventListener("click", handleSeatClick)
+  })
+}
+
+function handleSeatClick(event) {
+  const seatId = event.target.dataset.seat
+  const isOccupied = event.target.classList.contains("occupied")
+
+  if (isOccupied) {
+    // Remove passenger from seat
+    const passengerIndex = passengers.findIndex((p) => p.seat === seatId)
+    if (passengerIndex !== -1) {
+      passengers[passengerIndex].seat = null
+      updatePassengerList()
+      renderSeatMap()
+    }
+  } else {
+    // Select seat for assignment
+    document.querySelectorAll(".seat").forEach((s) => s.classList.remove("selected"))
+    event.target.classList.add("selected")
+    selectedSeat = seatId
+  }
+}
+
+// Passenger management
+function addNewPassenger() {
+  const name = passengerName.value.trim()
+
+  if (!name) {
+    alert("Por favor, digite o nome do passageiro")
+    return
+  }
+
+  const passenger = {
+    id: Date.now(),
+    name: name,
+    seat: selectedSeat,
+  }
+
+  passengers.push(passenger)
+
+  if (selectedSeat) {
+    selectedSeat = null
+    renderSeatMap()
+  }
+
+  passengerName.value = ""
+  updatePassengerList()
+  updateExportButton()
+}
+
+function removePassenger(passengerId) {
+  const index = passengers.findIndex((p) => p.id === passengerId)
+  if (index !== -1) {
+    passengers.splice(index, 1)
+    updatePassengerList()
+    renderSeatMap()
+    updateExportButton()
+  }
+}
+
+function assignSeatToPassenger(passengerId, seatId) {
+  const passenger = passengers.find((p) => p.id === passengerId)
+  if (passenger) {
+    // Remove seat from other passengers
+    passengers.forEach((p) => {
+      if (p.seat === seatId && p.id !== passengerId) {
+        p.seat = null
+      }
+    })
+
+    passenger.seat = seatId
+    updatePassengerList()
+    renderSeatMap()
+  }
+}
+
+function updatePassengerList() {
+  if (passengers.length === 0) {
+    passengerList.innerHTML = `
+      <div class="passenger-list-placeholder">
+        <svg class="placeholder-icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        <p>Nenhum passageiro adicionado</p>
+      </div>
+    `
+    return
+  }
+
+  const html = passengers
+    .map(
+      (passenger) => `
+    <div class="passenger-item">
+      <div class="passenger-info">
+        <span class="passenger-name">${passenger.name}</span>
+        ${passenger.seat ? `<span class="passenger-seat">Assento ${passenger.seat}</span>` : ""}
+      </div>
+      <div class="passenger-actions">
+        <button class="btn btn-outline btn-icon-only" onclick="removePassenger(${passenger.id})" title="Remover passageiro">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  `,
+    )
+    .join("")
+
+  passengerList.innerHTML = html
+}
+
+function updateExportButton() {
+  const hasPassengers = passengers.length > 0
+  exportPdf.disabled = !hasPassengers
+}
+
+// PDF Export functionality
+function exportToPDF() {
+  if (typeof window.jsPDF === "undefined") {
+    alert("Biblioteca PDF não carregada. Tente novamente.")
+    return
+  }
+
+  const { jsPDF } = window.jsPDF
+  const doc = new jsPDF()
+
+  // Header
+  doc.setFontSize(20)
+  doc.text("Lista de Passageiros - Simulador VFR", 20, 30)
+
+  // Aircraft info
+  doc.setFontSize(12)
+  if (aircraftConfig) {
+    doc.text(`Configuração da Aeronave: ${aircraftConfig.configuration.join("-")}`, 20, 50)
+    doc.text(`Número de Fileiras: ${aircraftConfig.rows}`, 20, 60)
+    doc.text(`Total de Assentos: ${aircraftConfig.rows * aircraftConfig.totalSeatsPerRow}`, 20, 70)
+  }
+
+  // Passenger list
+  doc.setFontSize(14)
+  doc.text("Lista de Passageiros:", 20, 90)
+
+  doc.setFontSize(10)
+  let yPosition = 110
+
+  if (passengers.length === 0) {
+    doc.text("Nenhum passageiro cadastrado", 20, yPosition)
+  } else {
+    passengers.forEach((passenger, index) => {
+      const seatText = passenger.seat ? `Assento ${passenger.seat}` : "Sem assento"
+      doc.text(`${index + 1}. ${passenger.name} - ${seatText}`, 20, yPosition)
+      yPosition += 10
+
+      // Add new page if needed
+      if (yPosition > 270) {
+        doc.addPage()
+        yPosition = 30
+      }
+    })
+  }
+
+  // Footer
+  const pageCount = doc.internal.getNumberOfPages()
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i)
+    doc.setFontSize(8)
+    doc.text(`Gerado em ${new Date().toLocaleString("pt-BR")} - Página ${i} de ${pageCount}`, 20, 285)
+    doc.text("Desenvolvido por Francesco Palmesi", 20, 292)
+  }
+
+  // Save the PDF
+  doc.save("lista-passageiros.pdf")
 }
 
 // Simplified map initialization function
@@ -277,7 +575,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // Wait for Leaflet to be available
   waitForLeafletAndInit()
 
-  // Set up event listeners
+  // Set up navigation event listeners
+  if (navLeft) {
+    navLeft.addEventListener("click", () => navigateToPage("seat-calculator"))
+  }
+
+  if (navRight) {
+    navRight.addEventListener("click", () => navigateToPage("flight-planner"))
+  }
+
+  // Set up flight planner event listeners
   if (calculateBtn) {
     calculateBtn.addEventListener("click", calculateFlight)
   }
@@ -290,8 +597,37 @@ document.addEventListener("DOMContentLoaded", () => {
     themeToggle.addEventListener("click", toggleTheme)
   }
 
+  if (themeToggleSeats) {
+    themeToggleSeats.addEventListener("click", toggleTheme)
+  }
+
   if (mapToggle) {
     mapToggle.addEventListener("click", toggleMapSize)
+  }
+
+  // Set up seat calculator event listeners
+  if (seatConfig) {
+    seatConfig.addEventListener("change", handleSeatConfigChange)
+  }
+
+  if (generateSeats) {
+    generateSeats.addEventListener("click", generateSeatMap)
+  }
+
+  if (addPassenger) {
+    addPassenger.addEventListener("click", addNewPassenger)
+  }
+
+  if (passengerName) {
+    passengerName.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        addNewPassenger()
+      }
+    })
+  }
+
+  if (exportPdf) {
+    exportPdf.addEventListener("click", exportToPDF)
   }
 
   // Update UI when inputs change
@@ -320,6 +656,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   updateUI()
+  updateExportButton()
 })
 
 // Handle window resize for map (only if map exists)
