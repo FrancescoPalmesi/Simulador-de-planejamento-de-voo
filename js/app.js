@@ -366,6 +366,15 @@ const passengers = []
 let selectedSeat = null
 let aircraftConfig = null
 
+// Flight information
+let flightInfo = {
+  name: "",
+  departureAirport: "",
+  arrivalAirport: "",
+  date: "",
+  time: "",
+}
+
 // DOM elements
 const mapElement = document.getElementById("map")
 const departureInput = document.getElementById("departure-coordinates")
@@ -422,10 +431,49 @@ const navTerms = document.getElementById("nav-terms")
 const navRadio = document.getElementById("nav-radio")
 const radioSection = document.getElementById("radio-procedures")
 const dictionaryResults = document.querySelector(".dictionary-results")
+const modalTermRelated = document.getElementById("modal-related-terms")
 
-// Remove old navigation variables
-// const navLeft = document.getElementById("nav-left")
-// const navRight = document.getElementById("nav-right")
+// Seat calculator elements
+const aircraftRows = document.getElementById("aircraft-rows")
+const seatConfig = document.getElementById("seat-config")
+const customConfig = document.getElementById("custom-config")
+const customSeats = document.getElementById("custom-seats")
+const generateSeats = document.getElementById("generate-seats")
+const seatMapElement = document.getElementById("seat-map")
+const passengerName = document.getElementById("passenger-name")
+const addPassenger = document.getElementById("add-passenger")
+const passengerList = document.getElementById("passenger-list")
+const exportPdf = document.getElementById("export-pdf")
+
+// Add these DOM elements after the existing seat calculator elements
+const flightName = document.getElementById("flight-name")
+const departureAirport = document.getElementById("departure-airport")
+const arrivalAirport = document.getElementById("arrival-airport")
+const flightDate = document.getElementById("flight-date")
+const flightTime = document.getElementById("flight-time")
+
+// Result elements
+const distanceValue = document.getElementById("distance-value")
+const timeValue = document.getElementById("time-value")
+const fuelValue = document.getElementById("fuel-value")
+const windValue = document.getElementById("wind-value")
+
+// Leaflet library
+const L = window.L
+
+// Theme management
+function initializeTheme() {
+  const savedTheme = localStorage.getItem("vfr-theme") || "light"
+  document.documentElement.setAttribute("data-theme", savedTheme)
+}
+
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute("data-theme")
+  const newTheme = currentTheme === "dark" ? "light" : "dark"
+
+  document.documentElement.setAttribute("data-theme", newTheme)
+  localStorage.setItem("vfr-theme", newTheme)
+}
 
 // Hamburger menu functionality
 function toggleHamburgerMenu() {
@@ -488,41 +536,6 @@ function updateActiveNavLink() {
   } else if (currentPage === "aviation-dictionary") {
     navAviationDictionary.classList.add("active")
   }
-}
-
-// Seat calculator elements
-const aircraftRows = document.getElementById("aircraft-rows")
-const seatConfig = document.getElementById("seat-config")
-const customConfig = document.getElementById("custom-config")
-const customSeats = document.getElementById("custom-seats")
-const generateSeats = document.getElementById("generate-seats")
-const seatMapElement = document.getElementById("seat-map")
-const passengerName = document.getElementById("passenger-name")
-const addPassenger = document.getElementById("add-passenger")
-const passengerList = document.getElementById("passenger-list")
-const exportPdf = document.getElementById("export-pdf")
-
-// Result elements
-const distanceValue = document.getElementById("distance-value")
-const timeValue = document.getElementById("time-value")
-const fuelValue = document.getElementById("fuel-value")
-const windValue = document.getElementById("wind-value")
-
-// Leaflet library
-const L = window.L
-
-// Theme management
-function initializeTheme() {
-  const savedTheme = localStorage.getItem("vfr-theme") || "light"
-  document.documentElement.setAttribute("data-theme", savedTheme)
-}
-
-function toggleTheme() {
-  const currentTheme = document.documentElement.getAttribute("data-theme")
-  const newTheme = currentTheme === "dark" ? "light" : "dark"
-
-  document.documentElement.setAttribute("data-theme", newTheme)
-  localStorage.setItem("vfr-theme", newTheme)
 }
 
 // Map expand/collapse functionality
@@ -747,60 +760,341 @@ function updateExportButton() {
 
 // PDF Export functionality
 function exportToPDF() {
-  if (typeof window.jsPDF === "undefined") {
-    alert("Biblioteca PDF não carregada. Tente novamente.")
+  // Create a simple PDF-like content in a new window for printing
+  const printWindow = window.open("", "_blank")
+
+  if (!printWindow) {
+    alert("Por favor, permita pop-ups para exportar o PDF")
     return
   }
 
-  const { jsPDF } = window.jsPDF
-  const doc = new jsPDF()
-
-  // Header
-  doc.setFontSize(20)
-  doc.text("Lista de Passageiros - Simulador VFR", 20, 30)
-
-  // Aircraft info
-  doc.setFontSize(12)
-  if (aircraftConfig) {
-    doc.text(`Configuração da Aeronave: ${aircraftConfig.configuration.join("-")}`, 20, 50)
-    doc.text(`Número de Fileiras: ${aircraftConfig.rows}`, 20, 60)
-    doc.text(`Total de Assentos: ${aircraftConfig.rows * aircraftConfig.totalSeatsPerRow}`, 20, 70)
+  // Get current flight information
+  const currentFlightInfo = {
+    name: flightName?.value || "Não informado",
+    departureAirport: departureAirport?.value || "Não informado",
+    arrivalAirport: arrivalAirport?.value || "Não informado",
+    date: flightDate?.value || "Não informado",
+    time: flightTime?.value || "Não informado",
   }
 
-  // Passenger list
-  doc.setFontSize(14)
-  doc.text("Lista de Passageiros:", 20, 90)
+  // Generate HTML content for PDF
+  let htmlContent = `
+    <!DOCTYPE html>
+    <html lang="pt-br">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Lista de Passageiros - ${currentFlightInfo.name}</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          margin: 20px;
+          line-height: 1.6;
+          color: #333;
+        }
+        .header {
+          text-align: center;
+          margin-bottom: 30px;
+          border-bottom: 2px solid #3b82f6;
+          padding-bottom: 20px;
+        }
+        .header h1 {
+          color: #3b82f6;
+          margin: 0;
+          font-size: 24px;
+        }
+        .flight-info {
+          background: #e3f2fd;
+          padding: 15px;
+          border-radius: 8px;
+          margin-bottom: 20px;
+          border-left: 4px solid #3b82f6;
+        }
+        .flight-info h2 {
+          color: #1565c0;
+          margin-top: 0;
+          font-size: 18px;
+        }
+        .flight-details {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 10px;
+          margin-top: 10px;
+        }
+        .flight-detail {
+          background: white;
+          padding: 8px;
+          border-radius: 4px;
+          border: 1px solid #bbdefb;
+        }
+        .flight-detail strong {
+          color: #1565c0;
+        }
+        .info-section {
+          margin-bottom: 30px;
+          background: #f8f9fa;
+          padding: 15px;
+          border-radius: 8px;
+        }
+        .info-section h2 {
+          color: #1f2937;
+          margin-top: 0;
+          font-size: 18px;
+        }
+        .info-item {
+          margin: 8px 0;
+        }
+        .passenger-list {
+          margin-top: 20px;
+        }
+        .passenger-item {
+          padding: 10px;
+          margin: 5px 0;
+          background: #ffffff;
+          border: 1px solid #e5e7eb;
+          border-radius: 5px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .passenger-name {
+          border: 1px solid #e5e7eb;
+          border-radius: 5px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .passenger-name {
+          font-weight: bold;
+          color: #1f2937;
+        }
+        .passenger-seat {
+          background: #3b82f6;
+          color: white;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 12px;
+        }
+        .no-passengers {
+          text-align: center;
+          color: #6b7280;
+          font-style: italic;
+          padding: 20px;
+        }
+        .footer {
+          margin-top: 40px;
+          padding-top: 20px;
+          border-top: 1px solid #e5e7eb;
+          text-align: center;
+          font-size: 12px;
+          color: #6b7280;
+        }
+        .summary-stats {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 15px;
+          margin: 20px 0;
+        }
+        .stat-card {
+          background: white;
+          padding: 15px;
+          border-radius: 8px;
+          border: 1px solid #e5e7eb;
+          text-align: center;
+        }
+        .stat-number {
+          font-size: 24px;
+          font-weight: bold;
+          color: #3b82f6;
+        }
+        .stat-label {
+          font-size: 12px;
+          color: #6b7280;
+          margin-top: 5px;
+        }
+        @media print {
+          body { margin: 0; }
+          .no-print { display: none; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <h1>Lista de Passageiros - Simulador VFR</h1>
+        <p>Relatório gerado em ${new Date().toLocaleString("pt-BR")}</p>
+      </div>
+      
+      <div class="flight-info">
+        <h2>📋 Informações do Voo</h2>
+        <div class="flight-details">
+          <div class="flight-detail">
+            <strong>Voo:</strong> ${currentFlightInfo.name}
+          </div>
+          <div class="flight-detail">
+            <strong>Origem:</strong> ${currentFlightInfo.departureAirport}
+          </div>
+          <div class="flight-detail">
+            <strong>Destino:</strong> ${currentFlightInfo.arrivalAirport}
+          </div>
+          <div class="flight-detail">
+            <strong>Data:</strong> ${currentFlightInfo.date !== "Não informado" ? new Date(currentFlightInfo.date).toLocaleDateString("pt-BR") : "Não informado"}
+          </div>
+          <div class="flight-detail">
+            <strong>Horário:</strong> ${currentFlightInfo.time}
+          </div>
+        </div>
+      </div>
+      
+      <div class="info-section">
+        <h2>✈️ Informações da Aeronave</h2>
+  `
 
-  doc.setFontSize(10)
-  let yPosition = 110
+  // Add aircraft information
+  if (aircraftConfig) {
+    const occupiedSeats = passengers.filter((p) => p.seat).length
+    const totalSeats = aircraftConfig.rows * aircraftConfig.totalSeatsPerRow
+    const occupancyRate = totalSeats > 0 ? ((occupiedSeats / totalSeats) * 100).toFixed(1) : 0
 
+    htmlContent += `
+        <div class="info-item"><strong>Configuração:</strong> ${aircraftConfig.configuration.join("-")}</div>
+        <div class="info-item"><strong>Número de Fileiras:</strong> ${aircraftConfig.rows}</div>
+        <div class="info-item"><strong>Total de Assentos:</strong> ${totalSeats}</div>
+        
+        <div class="summary-stats">
+          <div class="stat-card">
+            <div class="stat-number">${passengers.length}</div>
+            <div class="stat-label">Passageiros</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">${occupiedSeats}</div>
+            <div class="stat-label">Assentos Ocupados</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">${totalSeats - occupiedSeats}</div>
+            <div class="stat-label">Assentos Livres</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">${occupancyRate}%</div>
+            <div class="stat-label">Taxa de Ocupação</div>
+          </div>
+        </div>
+    `
+  } else {
+    htmlContent += `
+        <div class="info-item">Configuração da aeronave não definida</div>
+    `
+  }
+
+  htmlContent += `
+      </div>
+      
+      <div class="info-section">
+        <h2>👥 Lista de Passageiros (${passengers.length} passageiro${passengers.length !== 1 ? "s" : ""})</h2>
+        <div class="passenger-list">
+  `
+
+  // Add passenger list
   if (passengers.length === 0) {
-    doc.text("Nenhum passageiro cadastrado", 20, yPosition)
+    htmlContent += `
+          <div class="no-passengers">Nenhum passageiro cadastrado</div>
+    `
   } else {
     passengers.forEach((passenger, index) => {
-      const seatText = passenger.seat ? `Assento ${passenger.seat}` : "Sem assento"
-      doc.text(`${index + 1}. ${passenger.name} - ${seatText}`, 20, yPosition)
-      yPosition += 10
-
-      // Add new page if needed
-      if (yPosition > 270) {
-        doc.addPage()
-        yPosition = 30
-      }
+      const seatText = passenger.seat ? passenger.seat : "Sem assento"
+      htmlContent += `
+          <div class="passenger-item">
+            <span class="passenger-name">${index + 1}. ${passenger.name}</span>
+            <span class="passenger-seat">${seatText}</span>
+          </div>
+      `
     })
   }
 
-  // Footer
-  const pageCount = doc.internal.getNumberOfPages()
-  for (let i = 1; i <= pageCount; i++) {
-    doc.setPage(i)
-    doc.setFontSize(8)
-    doc.text(`Gerado em ${new Date().toLocaleString("pt-BR")} - Página ${i} de ${pageCount}`, 20, 285)
-    doc.text("Desenvolvido por Francesco Palmesi", 20, 292)
+  htmlContent += `
+        </div>
+      </div>
+      
+      <div class="footer">
+        <p><strong>Simulador VFR - Ferramenta Educacional de Aviação</strong></p>
+        <p>Desenvolvido por Francesco Palmesi</p>
+        <div class="no-print" style="margin-top: 20px;">
+          <button onclick="window.print()" style="background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-right: 10px;">Imprimir / Salvar PDF</button>
+          <button onclick="window.close()" style="background: #6b7280; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">Fechar</button>
+        </div>
+      </div>
+    </body>
+    </html>
+  `
+
+  // Write content to new window
+  printWindow.document.write(htmlContent)
+  printWindow.document.close()
+
+  // Focus the new window
+  printWindow.focus()
+
+  // Auto-trigger print dialog after a short delay
+  setTimeout(() => {
+    printWindow.print()
+  }, 500)
+}
+
+function updateFlightInfo() {
+  flightInfo = {
+    name: flightName?.value || "",
+    departureAirport: departureAirport?.value || "",
+    arrivalAirport: arrivalAirport?.value || "",
+    date: flightDate?.value || "",
+    time: flightTime?.value || "",
+  }
+}
+
+// Fix modal positioning and centering
+function showTermModal(termId) {
+  const term = aviationTerms.find((t) => t.id === termId)
+  if (!term) return
+
+  modalTermTitle.textContent = term.term
+  modalTermCategory.textContent = getCategoryName(term.category)
+  modalTermDefinition.textContent = term.definition
+
+  if (term.example) {
+    modalTermExample.style.display = "block"
+    modalTermExampleText.textContent = term.example
+  } else {
+    modalTermExample.style.display = "none"
   }
 
-  // Save the PDF
-  doc.save("lista-passageiros.pdf")
+  if (term.related && term.related.length > 0) {
+    modalTermRelated.style.display = "block"
+    const relatedHtml = term.related
+      .map((relatedTerm) => `<span class="related-term" data-related="${relatedTerm}">${relatedTerm}</span>`)
+      .join("")
+    modalRelatedTerms.innerHTML = relatedHtml
+
+    // Add click listeners to related terms
+    modalRelatedTerms.querySelectorAll(".related-term").forEach((relatedEl) => {
+      relatedEl.addEventListener("click", () => {
+        const relatedTermName = relatedEl.dataset.related
+        const relatedTerm = aviationTerms.find((t) => t.term === relatedTermName)
+        if (relatedTerm) {
+          showTermModal(relatedTerm.id)
+        }
+      })
+    })
+  } else {
+    modalTermRelated.style.display = "none"
+  }
+
+  // Show modal with proper centering
+  termModal.style.display = "flex"
+  document.body.style.overflow = "hidden"
+
+  // Ensure modal content is centered
+  const modalContent = termModal.querySelector(".modal-content")
+  if (modalContent) {
+    modalContent.scrollTop = 0
+  }
 }
 
 // Simplified map initialization function
@@ -1120,46 +1414,6 @@ function updateResultsCount() {
   }
 }
 
-function showTermModal(termId) {
-  const term = aviationTerms.find((t) => t.id === termId)
-  if (!term) return
-
-  modalTermTitle.textContent = term.term
-  modalTermCategory.textContent = getCategoryName(term.category)
-  modalTermDefinition.textContent = term.definition
-
-  if (term.example) {
-    modalTermExample.style.display = "block"
-    modalTermExampleText.textContent = term.example
-  } else {
-    modalTermExample.style.display = "none"
-  }
-
-  if (term.related && term.related.length > 0) {
-    const relatedHtml = term.related
-      .map((relatedTerm) => `<span class="related-term" data-related="${relatedTerm}">${relatedTerm}</span>`)
-      .join("")
-    modalRelatedTerms.innerHTML = relatedHtml
-
-    // Add click listeners to related terms
-    const relatedTermsElements = modalRelatedTerms.querySelectorAll(".related-term")
-    relatedTermsElements.forEach((relatedEl) => {
-      relatedEl.addEventListener("click", () => {
-        const relatedTermName = relatedEl.dataset.related
-        const relatedTerm = aviationTerms.find((t) => t.term === relatedTermName)
-        if (relatedTerm) {
-          showTermModal(relatedTerm.id)
-        }
-      })
-    })
-  } else {
-    modalRelatedTerms.style.display = "none"
-  }
-
-  termModal.style.display = "flex"
-  document.body.style.overflow = "hidden"
-}
-
 function closeTermModal() {
   termModal.style.display = "none"
   document.body.style.overflow = ""
@@ -1400,14 +1654,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   })
 
-  // Remove old navigation event listeners
-  // if (navLeft) {
-  //   navLeft.addEventListener("click", () => navigateToPage("seat-calculator"))
-  // }
-  // if (navRight) {
-  //   navRight.addEventListener("click", () => navigateToPage("flight-planner"))
-  // }
-
   // Set up flight planner event listeners
   if (calculateBtn) {
     calculateBtn.addEventListener("click", calculateFlight)
@@ -1452,6 +1698,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (exportPdf) {
     exportPdf.addEventListener("click", exportToPDF)
+  }
+
+  // Set up flight information event listeners
+  if (flightName) {
+    flightName.addEventListener("input", updateFlightInfo)
+  }
+
+  if (departureAirport) {
+    departureAirport.addEventListener("input", updateFlightInfo)
+  }
+
+  if (arrivalAirport) {
+    arrivalAirport.addEventListener("input", updateFlightInfo)
+  }
+
+  if (flightDate) {
+    flightDate.addEventListener("input", updateFlightInfo)
+  }
+
+  if (flightTime) {
+    flightTime.addEventListener("input", updateFlightInfo)
   }
 
   // Update UI when inputs change
