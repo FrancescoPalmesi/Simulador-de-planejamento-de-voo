@@ -393,6 +393,10 @@ const navFlightPlanner = document.getElementById("nav-flight-planner")
 const navSeatCalculator = document.getElementById("nav-seat-calculator")
 const appContainer = document.querySelector(".app-container")
 
+// Add this after the existing navigation variables
+const navAbout = document.getElementById("nav-about")
+const themeToggleAbout = document.getElementById("theme-toggle-about")
+
 // Dictionary elements
 const navAviationDictionary = document.getElementById("nav-aviation-dictionary")
 const themeToggleDictionary = document.getElementById("theme-toggle-dictionary")
@@ -411,7 +415,6 @@ const modalTermCategory = document.getElementById("modal-term-category")
 const modalTermDefinition = document.getElementById("modal-term-definition")
 const modalTermExample = document.getElementById("modal-term-example")
 const modalTermExampleText = document.getElementById("modal-term-example-text")
-const modalTermRelated = document.getElementById("modal-term-related")
 const modalRelatedTerms = document.getElementById("modal-related-terms")
 
 // Add these variables after the existing dictionary variables
@@ -448,6 +451,27 @@ function closeHamburgerMenu() {
   document.body.style.overflow = ""
 }
 
+// Navigation between pages (updated for four pages)
+function navigateToPage(page) {
+  currentPage = page
+
+  if (page === "seat-calculator") {
+    appContainer.classList.add("slide-left")
+    appContainer.classList.remove("slide-center", "slide-right")
+  } else if (page === "about") {
+    appContainer.classList.add("slide-center")
+    appContainer.classList.remove("slide-left", "slide-right")
+  } else if (page === "aviation-dictionary") {
+    appContainer.classList.add("slide-right")
+    appContainer.classList.remove("slide-left", "slide-center")
+  } else {
+    appContainer.classList.remove("slide-left", "slide-center", "slide-right")
+  }
+
+  updateActiveNavLink()
+  closeHamburgerMenu()
+}
+
 function updateActiveNavLink() {
   // Remove active class from all nav links
   document.querySelectorAll(".nav-link").forEach((link) => {
@@ -459,28 +483,11 @@ function updateActiveNavLink() {
     navFlightPlanner.classList.add("active")
   } else if (currentPage === "seat-calculator") {
     navSeatCalculator.classList.add("active")
+  } else if (currentPage === "about") {
+    navAbout.classList.add("active")
   } else if (currentPage === "aviation-dictionary") {
     navAviationDictionary.classList.add("active")
   }
-}
-
-// Navigation between pages (updated for three pages)
-function navigateToPage(page) {
-  currentPage = page
-
-  if (page === "seat-calculator") {
-    appContainer.classList.add("slide-left")
-    appContainer.classList.remove("slide-right")
-  } else if (page === "aviation-dictionary") {
-    appContainer.classList.add("slide-right")
-    appContainer.classList.remove("slide-left")
-  } else {
-    appContainer.classList.remove("slide-left")
-    appContainer.classList.remove("slide-right")
-  }
-
-  updateActiveNavLink()
-  closeHamburgerMenu()
 }
 
 // Seat calculator elements
@@ -1129,14 +1136,14 @@ function showTermModal(termId) {
   }
 
   if (term.related && term.related.length > 0) {
-    modalTermRelated.style.display = "block"
     const relatedHtml = term.related
       .map((relatedTerm) => `<span class="related-term" data-related="${relatedTerm}">${relatedTerm}</span>`)
       .join("")
     modalRelatedTerms.innerHTML = relatedHtml
 
     // Add click listeners to related terms
-    modalRelatedTerms.querySelectorAll(".related-term").forEach((relatedEl) => {
+    const relatedTermsElements = modalRelatedTerms.querySelectorAll(".related-term")
+    relatedTermsElements.forEach((relatedEl) => {
       relatedEl.addEventListener("click", () => {
         const relatedTermName = relatedEl.dataset.related
         const relatedTerm = aviationTerms.find((t) => t.term === relatedTermName)
@@ -1146,7 +1153,7 @@ function showTermModal(termId) {
       })
     })
   } else {
-    modalTermRelated.style.display = "none"
+    modalRelatedTerms.style.display = "none"
   }
 
   termModal.style.display = "flex"
@@ -1218,7 +1225,7 @@ function renderPhoneticAlphabet() {
       <button class="phonetic-audio" onclick="speakPhonetic('${item.word}')" title="Ouvir pronúncia">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
         </svg>
       </button>
     </div>
@@ -1375,6 +1382,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (navSeatCalculator) {
     navSeatCalculator.addEventListener("click", () => navigateToPage("seat-calculator"))
+  }
+
+  // Add this after the existing navigation event listeners
+  if (navAbout) {
+    navAbout.addEventListener("click", () => navigateToPage("about"))
+  }
+
+  if (themeToggleAbout) {
+    themeToggleAbout.addEventListener("click", toggleTheme)
   }
 
   // Close menu on escape key

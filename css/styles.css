@@ -244,20 +244,24 @@ body {
 /* App Container with Sliding Pages */
 .app-container {
   display: flex;
-  width: 300%;
+  width: 400%;
   transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .app-container.slide-left {
-  transform: translateX(-33.333%);
+  transform: translateX(-25%);
+}
+
+.app-container.slide-center {
+  transform: translateX(-50%);
 }
 
 .app-container.slide-right {
-  transform: translateX(-66.666%);
+  transform: translateX(-75%);
 }
 
 .page {
-  width: 33.333%;
+  width: 25%;
   min-height: 100vh;
 }
 
@@ -1876,5 +1880,371 @@ body {
 
   .numbers-grid {
     grid-template-columns: repeat(10, 1fr);
+  }
+}
+
+/* About Page Styles */
+.mission-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.mission-text {
+  color: var(--text-primary);
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+.audience-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.audience-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--secondary-color);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+}
+
+.audience-icon {
+  padding: 0.75rem;
+  border-radius: var(--border-radius);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.audience-icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.audience-icon-blue {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.audience-icon-green {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.audience-icon-orange {
+  background: #fed7aa;
+  color: #ea580c;
+}
+
+.audience-icon-purple {
+  background: #f3e8ff;
+  color: #7c3aed;
+}
+
+[data-theme="dark"] .audience-icon-blue {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+}
+
+[data-theme="dark"] .audience-icon-green {
+  background: rgba(34, 197, 94, 0.2);
+  color: #86efac;
+}
+
+[data-theme="dark"] .audience-icon-orange {
+  background: rgba(251, 146, 60, 0.2);
+  color: #fdba74;
+}
+
+[data-theme="dark"] .audience-icon-purple {
+  background: rgba(168, 85, 247, 0.2);
+  color: #c4b5fd;
+}
+
+.audience-content {
+  flex: 1;
+}
+
+.audience-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.audience-text {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.feature-card {
+  padding: 1.5rem;
+  background: var(--secondary-color);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  transition: var(--transition);
+}
+
+.feature-card:hover {
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.feature-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.feature-icon {
+  padding: 0.75rem;
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.feature-icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.feature-icon-blue {
+  background: var(--primary-color);
+  color: white;
+}
+
+.feature-icon-green {
+  background: var(--success-color);
+  color: white;
+}
+
+.feature-icon-orange {
+  background: var(--warning-color);
+  color: white;
+}
+
+.feature-icon-purple {
+  background: #7c3aed;
+  color: white;
+}
+
+.feature-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.feature-description {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.philosophy-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.philosophy-principles {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.principle-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--secondary-color);
+  border-radius: var(--border-radius);
+  border-left: 4px solid var(--primary-color);
+}
+
+.principle-icon {
+  padding: 0.5rem;
+  background: var(--primary-color);
+  color: white;
+  border-radius: var(--border-radius);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.principle-icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.principle-content {
+  flex: 1;
+}
+
+.principle-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.principle-text {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-size: 0.875rem;
+}
+
+.developer-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.developer-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.developer-avatar {
+  width: 4rem;
+  height: 4rem;
+  background: var(--primary-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.developer-avatar svg {
+  width: 2rem;
+  height: 2rem;
+  color: white;
+}
+
+.developer-details {
+  flex: 1;
+}
+
+.developer-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.developer-role {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.developer-description {
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.developer-links {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.developer-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--primary-color);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--border-radius);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.developer-link:hover {
+  background: var(--primary-hover);
+}
+
+.link-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.contact-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.contact-text {
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+.contact-features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.contact-feature {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--secondary-color);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+}
+
+.contact-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--primary-color);
+  flex-shrink: 0;
+}
+
+.contact-feature span {
+  color: var(--text-primary);
+  font-size: 0.875rem;
+}
+
+/* Responsive adjustments for About page */
+@media (min-width: 640px) {
+  .audience-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .developer-info {
+    flex-direction: row;
+  }
+}
+
+@media (min-width: 1024px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

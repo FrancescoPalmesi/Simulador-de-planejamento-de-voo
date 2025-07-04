@@ -32,7 +32,7 @@
                 </div>
                 <ul class="nav-list">
                     <li class="nav-item">
-                        <button class="nav-link" id="nav-flight-planner" data-page="flight-planner">
+                        <button class="nav-link" id="nav-flight-planner" data-page="flight-planner">                            
                             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
                                 <line x1="8" y1="21" x2="16" y2="21"/>
@@ -61,15 +61,25 @@
                             <span>Simulador VFR</span>
                         </button>
                     </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="nav-about" data-page="about">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                                <line x1="12" y1="17" x2="12.01" y2="17"/>
+                            </svg>
+                            <span>Sobre o Projeto</span>
+                        </button>
+                    </li>
                 </ul>
             </div>
         </nav>
     </div>
 
     <!-- Main Container with Sliding Pages -->
-    <div class="app-container">
+    <div class="app-container" style="width: 400%;">
         <!-- Seat Calculator Page -->
-        <div class="page seat-calculator-page" id="seat-calculator">
+        <div class="page seat-calculator-page" id="seat-calculator" style="width: 25%;">
             <div class="container">
                 <header class="header">
                     <div class="header-content">
@@ -240,7 +250,7 @@
         </div>
 
         <!-- Aviation Dictionary Page -->
-        <div class="page aviation-dictionary-page" id="aviation-dictionary">
+        <div class="page aviation-dictionary-page" id="aviation-dictionary" style="width: 25%;">
             <div class="container">
                 <header class="header">
                     <div class="header-content">
@@ -501,8 +511,381 @@
             </div>
         </div>
 
+        <!-- About Page -->
+        <div class="page about-page" id="about" style="width: 25%;">
+            <div class="container">
+                <header class="header">
+                    <div class="header-content">
+                        <div class="header-icon">
+                            <svg class="plane-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                                <line x1="12" y1="17" x2="12.01" y2="17"/>
+                            </svg>
+                        </div>
+                        <h1 class="header-title">Sobre o Projeto</h1>
+                        <!-- Theme Toggle Button -->
+                        <button class="theme-toggle" id="theme-toggle-about" aria-label="Toggle theme">
+                            <svg class="theme-icon sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="5"/>
+                                <line x1="12" y1="1" x2="12" y2="3"/>
+                                <line x1="12" y1="21" x2="12" y2="23"/>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                                <line x1="1" y1="12" x2="3" y2="12"/>
+                                <line x1="21" y1="12" x2="23" y2="12"/>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                            </svg>
+                            <svg class="theme-icon moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="header-subtitle">
+                        Conheça a missão educacional e os objetivos deste simulador de aviação
+                    </p>
+                </header>
+
+                <main class="main-content">
+                    <!-- Mission Section -->
+                    <section class="mission-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 2l3.09 6.26L22 9l-5 4.74L18.18 21 12 17.77 5.82 21 7 13.74 2 9l6.91-1.26L12 2z"/>
+                                    </svg>
+                                    Nossa Missão
+                                </h2>
+                            </div>
+                            <div class="card-content">
+                                <div class="mission-content">
+                                    <p class="mission-text">
+                                        O <strong>Simulador VFR</strong> foi desenvolvido com o objetivo de <strong>democratizar o acesso ao conhecimento aeronáutico</strong>, 
+                                        oferecendo ferramentas práticas e educacionais para estudantes de aviação, pilotos iniciantes e profissionais da aviação regional.
+                                    </p>
+                                    <p class="mission-text">
+                                        Acreditamos que a educação aeronáutica deve ser <strong>acessível, prática e baseada em situações reais</strong>, 
+                                        preparando melhor os futuros aviadores para os desafios da profissão.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Target Audience Section -->
+                    <section class="audience-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="9" cy="7" r="4"/>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                    </svg>
+                                    Público-Alvo
+                                </h2>
+                            </div>
+                            <div class="card-content">
+                                <div class="audience-grid">
+                                    <div class="audience-item">
+                                        <div class="audience-icon audience-icon-blue">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                                                <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                                            </svg>
+                                        </div>
+                                        <div class="audience-content">
+                                            <h3 class="audience-title">Estudantes de Aviação</h3>
+                                            <p class="audience-text">Complemento prático aos estudos teóricos, com ferramentas para praticar planejamento de voo e procedimentos de rádio.</p>
+                                        </div>
+                                    </div>
+                                    <div class="audience-item">
+                                        <div class="audience-icon audience-icon-green">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4s-2 1-3.5 2.5L11 10l-8.2-1.8c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12.5l-2.5 2.5L5 14l-1.5 1.5L6 18l2.5-2.5L12.5 9l1.8 7.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1Z"/>
+                                            </svg>
+                                        </div>
+                                        <div class="audience-content">
+                                            <h3 class="audience-title">Pilotos Iniciantes</h3>
+                                            <p class="audience-text">Ambiente seguro para praticar habilidades essenciais antes dos voos reais, incluindo comunicação e planejamento.</p>
+                                        </div>
+                                    </div>
+                                    <div class="audience-item">
+                                        <div class="audience-icon audience-icon-orange">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                                <line x1="8" y1="21" x2="16" y2="21"/>
+                                                <line x1="12" y1="17" x2="12" y2="21"/>
+                                            </svg>
+                                        </div>
+                                        <div class="audience-content">
+                                            <h3 class="audience-title">Aviação Regional</h3>
+                                            <p class="audience-text">Ferramentas específicas para operações de pequeno porte, incluindo gestão de passageiros e configurações flexíveis.</p>
+                                        </div>
+                                    </div>
+                                    <div class="audience-item">
+                                        <div class="audience-icon audience-icon-purple">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                                <polyline points="14,2 14,8 20,8"/>
+                                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                                <polyline points="10,9 9,9 8,9"/>
+                                            </svg>
+                                        </div>
+                                        <div class="audience-content">
+                                            <h3 class="audience-title">Instrutores de Voo</h3>
+                                            <p class="audience-text">Material de apoio para aulas práticas e demonstrações, com recursos visuais e interativos.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Features Overview Section -->
+                    <section class="features-overview-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 2l3.09 6.26L22 9l-5 4.74L18.18 21 12 17.77 5.82 21 7 13.74 2 9l6.91-1.26L12 2z"/>
+                                    </svg>
+                                    Principais Funcionalidades
+                                </h2>
+                            </div>
+                            <div class="card-content">
+                                <div class="features-grid">
+                                    <div class="feature-card">
+                                        <div class="feature-header">
+                                            <div class="feature-icon feature-icon-blue">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4s-2 1-3.5 2.5L11 10l-8.2-1.8c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12.5l-2.5 2.5L5 14l-1.5 1.5L6 18l2.5-2.5L12.5 9l1.8 7.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1Z"/>
+                                                </svg>
+                                            </div>
+                                            <h3 class="feature-title">Simulador VFR</h3>
+                                        </div>
+                                        <p class="feature-description">
+                                            Planejamento interativo de voos VFR com mapa dinâmico, cálculos automáticos de distância, 
+                                            tempo de voo, consumo de combustível e informações meteorológicas.
+                                        </p>
+                                    </div>
+                                    <div class="feature-card">
+                                        <div class="feature-header">
+                                            <div class="feature-icon feature-icon-green">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                                    <line x1="8" y1="21" x2="16" y2="21"/>
+                                                    <line x1="12" y1="17" x2="12" y2="21"/>
+                                                </svg>
+                                            </div>
+                                            <h3 class="feature-title">Calculadora de Assentos</h3>
+                                        </div>
+                                        <p class="feature-description">
+                                            Gestão completa de configurações de aeronaves, atribuição de assentos a passageiros 
+                                            e exportação de listas de embarque em PDF.
+                                        </p>
+                                    </div>
+                                    <div class="feature-card">
+                                        <div class="feature-header">
+                                            <div class="feature-icon feature-icon-orange">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                                                </svg>
+                                            </div>
+                                            <h3 class="feature-title">Dicionário de Aviação</h3>
+                                        </div>
+                                        <p class="feature-description">
+                                            Mais de 20 termos técnicos organizados por categoria, com definições claras, 
+                                            exemplos práticos e sistema de busca inteligente.
+                                        </p>
+                                    </div>
+                                    <div class="feature-card">
+                                        <div class="feature-header">
+                                            <div class="feature-icon feature-icon-purple">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M5 16V9h14v7H5z"/>
+                                                    <path d="M1 9v7a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V9"/>
+                                                </svg>
+                                            </div>
+                                            <h3 class="feature-title">Procedimentos de Rádio</h3>
+                                        </div>
+                                        <p class="feature-description">
+                                            Alfabeto fonético ICAO completo, frases padrão de comunicação, procedimentos de emergência 
+                                            e dicas profissionais para comunicação eficaz.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Educational Philosophy Section -->
+                    <section class="philosophy-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                    </svg>
+                                    Filosofia Educacional
+                                </h2>
+                            </div>
+                            <div class="card-content">
+                                <div class="philosophy-content">
+                                    <div class="philosophy-principles">
+                                        <div class="principle-item">
+                                            <div class="principle-icon">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                                                    <path d="M2 17l10 5 10-5"/>
+                                                    <path d="M2 12l10 5 10-5"/>
+                                                </svg>
+                                            </div>
+                                            <div class="principle-content">
+                                                <h4 class="principle-title">Aprendizado Prático</h4>
+                                                <p class="principle-text">Ferramentas interativas que simulam situações reais de voo, permitindo prática segura antes da aplicação real.</p>
+                                            </div>
+                                        </div>
+                                        <div class="principle-item">
+                                            <div class="principle-icon">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <circle cx="12" cy="12" r="10"/>
+                                                    <path d="M8 12l2 2 4-4"/>
+                                                </svg>
+                                            </div>
+                                            <div class="principle-content">
+                                                <h4 class="principle-title">Acessibilidade Total</h4>
+                                                <p class="principle-text">100% gratuito e disponível online, funcionando em qualquer dispositivo sem necessidade de instalação.</p>
+                                            </div>
+                                        </div>
+                                        <div class="principle-item">
+                                            <div class="principle-icon">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                                    <circle cx="9" cy="7" r="4"/>
+                                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                                </svg>
+                                            </div>
+                                            <div class="principle-content">
+                                                <h4 class="principle-title">Foco na Comunidade</h4>
+                                                <p class="principle-text">Desenvolvido especificamente para as necessidades da aviação regional brasileira e estudantes iniciantes.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Developer Section -->
+                    <section class="developer-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="12" cy="7" r="4"/>
+                                    </svg>
+                                    Sobre o Desenvolvedor
+                                </h2>
+                            </div>
+                            <div class="card-content">
+                                <div class="developer-content">
+                                    <div class="developer-info">
+                                        <div class="developer-avatar">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                                <circle cx="12" cy="7" r="4"/>
+                                            </svg>
+                                        </div>
+                                        <div class="developer-details">
+                                            <h3 class="developer-name">Francesco Palmesi</h3>
+                                            <p class="developer-role">Desenvolvedor Full-Stack & Entusiasta da Aviação</p>
+                                            <p class="developer-description">
+                                                Apaixonado por tecnologia e aviação, desenvolvi este projeto para contribuir com a 
+                                                educação aeronáutica no Brasil. Acredito que a tecnologia pode tornar o aprendizado 
+                                                mais acessível e eficaz para todos.
+                                            </p>
+                                            <div class="developer-links">
+                                                <a href="https://francescoportfolio.netlify.app/" target="_blank" rel="noopener noreferrer" class="developer-link">
+                                                    <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                                                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                                                    </svg>
+                                                    Portfolio
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Contact Section -->
+                    <section class="contact-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                    </svg>
+                                    Feedback e Contribuições
+                                </h2>
+                            </div>
+                            <div class="card-content">
+                                <div class="contact-content">
+                                    <p class="contact-text">
+                                        Este projeto está em constante evolução! Suas sugestões, feedback e contribuições são fundamentais 
+                                        para torná-lo ainda mais útil para a comunidade aeronáutica.
+                                    </p>
+                                    <div class="contact-features">
+                                        <div class="contact-feature">
+                                            <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M9 11H5a2 2 0 0 0-2 2v3c0 1.1.9 2 2 2h4l3 3h7a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7l-3 3z"/>
+                                            </svg>
+                                            <span>Sugestões de novas funcionalidades</span>
+                                        </div>
+                                        <div class="contact-feature">
+                                            <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M14 9V5a3 3 0 0 0-6 0v4"/>
+                                                <rect x="2" y="9" width="20" height="12" rx="2" ry="2"/>
+                                            </svg>
+                                            <span>Relatórios de bugs ou problemas</span>
+                                        </div>
+                                        <div class="contact-feature">
+                                            <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                                            </svg>
+                                            <span>Contribuições para o dicionário técnico</span>
+                                        </div>
+                                        <div class="contact-feature">
+                                            <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                                <circle cx="9" cy="7" r="4"/>
+                                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                            </svg>
+                                            <span>Parcerias educacionais</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </main>
+            </div>
+        </div>
+
         <!-- Flight Planner Page (Original) -->
-        <div class="page flight-planner-page" id="flight-planner">
+        <div class="page flight-planner-page" id="flight-planner" style="width: 25%;">
             <div class="container">
                 <!-- Header -->
                 <header class="header">
