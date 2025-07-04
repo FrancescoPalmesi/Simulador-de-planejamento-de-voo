@@ -1,3 +1,359 @@
+// Aviation Dictionary Data
+const aviationTerms = [
+  {
+    id: 1,
+    term: "VFR",
+    category: "regulations",
+    definition:
+      "Visual Flight Rules - Regras de voo visual que permitem ao piloto navegar por referências visuais externas, mantendo separação de outras aeronaves e obstáculos através da visão.",
+    example: "O piloto decidiu voar em VFR devido às excelentes condições meteorológicas.",
+    related: ["IFR", "VMC", "Visibilidade"],
+  },
+  {
+    id: 2,
+    term: "IFR",
+    category: "regulations",
+    definition:
+      "Instrument Flight Rules - Regras de voo por instrumentos utilizadas quando as condições meteorológicas não permitem voo visual seguro.",
+    example: "Devido à neblina, o voo foi realizado em IFR com navegação por instrumentos.",
+    related: ["VFR", "IMC", "Radionavegação"],
+  },
+  {
+    id: 3,
+    term: "METAR",
+    category: "meteorology",
+    definition:
+      "Meteorological Aerodrome Report - Relatório meteorológico de aeródromo que fornece informações sobre condições meteorológicas atuais.",
+    example: "O METAR indicava vento de 090° a 15 nós com visibilidade de 10km.",
+    related: ["TAF", "SPECI", "Meteorologia"],
+  },
+  {
+    id: 4,
+    term: "TAF",
+    category: "meteorology",
+    definition:
+      "Terminal Aerodrome Forecast - Previsão meteorológica para aeródromo terminal, válida por períodos específicos.",
+    example: "O TAF previa deterioração das condições meteorológicas após as 18:00Z.",
+    related: ["METAR", "Previsão", "Meteorologia"],
+  },
+  {
+    id: 5,
+    term: "NDB",
+    category: "navigation",
+    definition:
+      "Non-Directional Beacon - Radiofarol não direcional que transmite sinais em todas as direções, usado para navegação.",
+    example: "A aeronave utilizou o NDB para navegação de aproximação ao aeroporto.",
+    related: ["VOR", "ADF", "Radionavegação"],
+  },
+  {
+    id: 6,
+    term: "VOR",
+    category: "navigation",
+    definition:
+      "VHF Omnidirectional Range - Sistema de radionavegação que fornece informações de azimute magnético em relação à estação.",
+    example: "O piloto sintonizou o VOR para navegar na radial 090.",
+    related: ["NDB", "DME", "Radionavegação"],
+  },
+  {
+    id: 7,
+    term: "DME",
+    category: "navigation",
+    definition:
+      "Distance Measuring Equipment - Equipamento que mede a distância entre a aeronave e uma estação terrestre.",
+    example: "O DME indicava 25 milhas náuticas da estação VOR.",
+    related: ["VOR", "TACAN", "Navegação"],
+  },
+  {
+    id: 8,
+    term: "TCAS",
+    category: "aircraft",
+    definition:
+      "Traffic Collision Avoidance System - Sistema de prevenção de colisão de tráfego que monitora aeronaves próximas.",
+    example: "O TCAS emitiu um alerta de tráfego a 2 milhas náuticas.",
+    related: ["Transponder", "Radar", "Segurança"],
+  },
+  {
+    id: 9,
+    term: "Squawk",
+    category: "communication",
+    definition: "Código de quatro dígitos transmitido pelo transponder para identificação da aeronave no radar.",
+    example: "Torre: 'Aeronave PT-ABC, squawk 2000'.",
+    related: ["Transponder", "Radar", "ATC"],
+  },
+  {
+    id: 10,
+    term: "Roger",
+    category: "communication",
+    definition: "Confirmação de que a mensagem foi recebida e compreendida, mas não necessariamente que será cumprida.",
+    example: "Piloto: 'Roger, mantenho altitude 3000 pés'.",
+    related: ["Wilco", "Affirm", "Comunicação"],
+  },
+  {
+    id: 11,
+    term: "Wilco",
+    category: "communication",
+    definition: "Will Comply - Indica que a mensagem foi recebida, compreendida e será cumprida.",
+    example: "Piloto: 'Wilco, curva à direita proa 180'.",
+    related: ["Roger", "Affirm", "Comunicação"],
+  },
+  {
+    id: 12,
+    term: "Final",
+    category: "procedures",
+    definition: "Segmento final da aproximação para pouso, alinhado com a pista de aterrissagem.",
+    example: "Aeronave estabelecida no final da pista 09, autorizada para pouso.",
+    related: ["Base", "Downwind", "Circuito"],
+  },
+  {
+    id: 13,
+    term: "Go Around",
+    category: "procedures",
+    definition: "Procedimento de arremetida quando o pouso não pode ser completado com segurança.",
+    example: "Torre autorizou go around devido a aeronave na pista.",
+    related: ["Arremetida", "Aproximação", "Segurança"],
+  },
+  {
+    id: 14,
+    term: "Crosswind",
+    category: "meteorology",
+    definition: "Componente do vento perpendicular ao eixo da pista, que afeta as operações de decolagem e pouso.",
+    example: "O crosswind de 15 nós exigiu correção durante o pouso.",
+    related: ["Headwind", "Tailwind", "Vento"],
+  },
+  {
+    id: 15,
+    term: "Flaps",
+    category: "aircraft",
+    definition: "Superfícies de controle móveis na asa que aumentam sustentação e arrasto para decolagens e pousos.",
+    example: "Piloto baixou flaps 20° para a aproximação final.",
+    related: ["Slats", "Spoilers", "Controles"],
+  },
+  {
+    id: 16,
+    term: "Stall",
+    category: "aircraft",
+    definition: "Perda de sustentação que ocorre quando o ângulo de ataque excede o ângulo crítico.",
+    example: "O piloto recuperou rapidamente do stall baixando o nariz da aeronave.",
+    related: ["Ângulo de Ataque", "Sustentação", "Aerodinâmica"],
+  },
+  {
+    id: 17,
+    term: "Ceiling",
+    category: "meteorology",
+    definition: "Altura da base da camada de nuvens mais baixa que cobre mais da metade do céu.",
+    example: "O ceiling estava a 1500 pés, limitando operações VFR.",
+    related: ["Visibilidade", "Nuvens", "VMC"],
+  },
+  {
+    id: 18,
+    term: "QNH",
+    category: "navigation",
+    definition: "Pressão atmosférica ao nível médio do mar, usada para ajuste do altímetro.",
+    example: "Torre informou QNH 1013 hectopascais.",
+    related: ["QFE", "QNE", "Altimetria"],
+  },
+  {
+    id: 19,
+    term: "Mayday",
+    category: "communication",
+    definition: "Chamada de emergência internacional indicando situação de perigo iminente.",
+    example: "Mayday, mayday, aeronave PT-XYZ com falha de motor.",
+    related: ["Pan-Pan", "Emergência", "Socorro"],
+  },
+  {
+    id: 20,
+    term: "Pan-Pan",
+    category: "communication",
+    definition: "Chamada de urgência internacional para situações que requerem assistência mas não são emergências.",
+    example: "Pan-Pan, aeronave com problema no sistema elétrico.",
+    related: ["Mayday", "Urgência", "Assistência"],
+  },
+]
+
+// Radio Procedures Data
+const phoneticAlphabet = [
+  { letter: "A", word: "Alpha", pronunciation: "AL-fah" },
+  { letter: "B", word: "Bravo", pronunciation: "BRAH-voh" },
+  { letter: "C", word: "Charlie", pronunciation: "CHAR-lee" },
+  { letter: "D", word: "Delta", pronunciation: "DELL-tah" },
+  { letter: "E", word: "Echo", pronunciation: "ECK-oh" },
+  { letter: "F", word: "Foxtrot", pronunciation: "FOKS-trot" },
+  { letter: "G", word: "Golf", pronunciation: "GOLF" },
+  { letter: "H", word: "Hotel", pronunciation: "hoh-TELL" },
+  { letter: "I", word: "India", pronunciation: "IN-dee-ah" },
+  { letter: "J", word: "Juliet", pronunciation: "JEW-lee-ett" },
+  { letter: "K", word: "Kilo", pronunciation: "KEY-loh" },
+  { letter: "L", word: "Lima", pronunciation: "LEE-mah" },
+  { letter: "M", word: "Mike", pronunciation: "MIKE" },
+  { letter: "N", word: "November", pronunciation: "no-VEM-ber" },
+  { letter: "O", word: "Oscar", pronunciation: "OSS-cah" },
+  { letter: "P", word: "Papa", pronunciation: "pah-PAH" },
+  { letter: "Q", word: "Quebec", pronunciation: "keh-BECK" },
+  { letter: "R", word: "Romeo", pronunciation: "ROW-me-oh" },
+  { letter: "S", word: "Sierra", pronunciation: "see-AIR-rah" },
+  { letter: "T", word: "Tango", pronunciation: "TANG-go" },
+  { letter: "U", word: "Uniform", pronunciation: "YOU-nee-form" },
+  { letter: "V", word: "Victor", pronunciation: "VIK-tah" },
+  { letter: "W", word: "Whiskey", pronunciation: "WISS-key" },
+  { letter: "X", word: "X-ray", pronunciation: "ECKS-ray" },
+  { letter: "Y", word: "Yankee", pronunciation: "YANG-key" },
+  { letter: "Z", word: "Zulu", pronunciation: "ZOO-loo" },
+]
+
+const numbersPronunciation = [
+  { digit: "0", pronunciation: "Zero" },
+  { digit: "1", pronunciation: "One" },
+  { digit: "2", pronunciation: "Two" },
+  { digit: "3", pronunciation: "Tree" },
+  { digit: "4", pronunciation: "Four" },
+  { digit: "5", pronunciation: "Five" },
+  { digit: "6", pronunciation: "Six" },
+  { digit: "7", pronunciation: "Seven" },
+  { digit: "8", pronunciation: "Eight" },
+  { digit: "9", pronunciation: "Niner" },
+]
+
+const standardPhrases = [
+  {
+    category: "Confirmação",
+    icon: "✓",
+    phrases: [
+      {
+        text: "Roger",
+        meaning: "Mensagem recebida e compreendida",
+        example: "Torre: 'Mantenha altitude 3000 pés' - Piloto: 'Roger'",
+      },
+      {
+        text: "Wilco",
+        meaning: "Mensagem recebida, compreendida e será cumprida",
+        example: "Torre: 'Curva à direita proa 180' - Piloto: 'Wilco'",
+      },
+      {
+        text: "Affirm",
+        meaning: "Sim, correto",
+        example: "Torre: 'Confirma combustível para 2 horas?' - Piloto: 'Affirm'",
+      },
+      {
+        text: "Negative",
+        meaning: "Não, incorreto",
+        example: "Torre: 'Tráfego à vista?' - Piloto: 'Negative'",
+      },
+    ],
+  },
+  {
+    category: "Solicitações",
+    icon: "❓",
+    phrases: [
+      {
+        text: "Request",
+        meaning: "Solicito",
+        example: "Piloto: 'Request altitude change to 4000 feet'",
+      },
+      {
+        text: "Say again",
+        meaning: "Repita a mensagem",
+        example: "Piloto: 'Say again last transmission'",
+      },
+      {
+        text: "Speak slower",
+        meaning: "Fale mais devagar",
+        example: "Piloto: 'Speak slower please'",
+      },
+      {
+        text: "Stand by",
+        meaning: "Aguarde",
+        example: "Torre: 'Stand by for clearance'",
+      },
+    ],
+  },
+  {
+    category: "Posição e Movimento",
+    icon: "📍",
+    phrases: [
+      {
+        text: "Taxi to",
+        meaning: "Taxie para",
+        example: "Torre: 'Taxi to runway 09 via taxiway Alpha'",
+      },
+      {
+        text: "Hold short",
+        meaning: "Pare antes de",
+        example: "Torre: 'Hold short of runway 09'",
+      },
+      {
+        text: "Line up and wait",
+        meaning: "Alinhe e aguarde",
+        example: "Torre: 'Line up and wait runway 09'",
+      },
+      {
+        text: "Cleared for takeoff",
+        meaning: "Autorizado para decolagem",
+        example: "Torre: 'PT-ABC cleared for takeoff runway 09'",
+      },
+    ],
+  },
+]
+
+const emergencyProcedures = [
+  {
+    title: "MAYDAY",
+    description: "Chamada de emergência para situações de perigo iminente à vida ou aeronave.",
+    example:
+      "MAYDAY, MAYDAY, MAYDAY\nPT-ABC, CESSNA 172\nEngine failure\n10 miles north of SBSP\n2 souls on board\nRequest immediate assistance",
+  },
+  {
+    title: "PAN-PAN",
+    description: "Chamada de urgência para situações que requerem assistência mas não são emergências.",
+    example:
+      "PAN-PAN, PAN-PAN, PAN-PAN\nPT-XYZ, PIPER CHEROKEE\nElectrical system malfunction\nRequest priority landing SBSP\n4 souls on board",
+  },
+  {
+    title: "SQUAWK 7700",
+    description: "Código de transponder para emergência geral.",
+    example: "Torre: 'PT-ABC squawk 7700 and state nature of emergency'",
+  },
+  {
+    title: "SQUAWK 7600",
+    description: "Código de transponder para falha de comunicação.",
+    example: "Em caso de falha de rádio, ajuste transponder para 7600 e continue conforme plano de voo",
+  },
+]
+
+const communicationTips = [
+  {
+    title: "Clareza",
+    description: "Fale de forma clara e pausada. Articule bem cada palavra e evite gírias ou expressões regionais.",
+  },
+  {
+    title: "Brevidade",
+    description: "Seja conciso. Use apenas as palavras necessárias para transmitir a informação completa.",
+  },
+  {
+    title: "Escuta Ativa",
+    description: "Sempre confirme instruções importantes. Se não entender, peça para repetir.",
+  },
+  {
+    title: "Identificação",
+    description: "Sempre identifique sua aeronave no início de cada transmissão.",
+  },
+  {
+    title: "Paciência",
+    description: "Aguarde sua vez de falar. Não interrompa outras comunicações exceto em emergências.",
+  },
+  {
+    title: "Preparação",
+    description: "Organize suas ideias antes de transmitir. Saiba o que vai dizer antes de pressionar o PTT.",
+  },
+]
+
+// Dictionary variables
+let filteredTerms = [...aviationTerms]
+let currentCategory = "all"
+let currentSort = "alphabetical"
+
+// Dictionary section management
+let currentDictionarySection = "terms"
+
 // Global variables
 let map
 let markers = []
@@ -37,6 +393,33 @@ const navFlightPlanner = document.getElementById("nav-flight-planner")
 const navSeatCalculator = document.getElementById("nav-seat-calculator")
 const appContainer = document.querySelector(".app-container")
 
+// Dictionary elements
+const navAviationDictionary = document.getElementById("nav-aviation-dictionary")
+const themeToggleDictionary = document.getElementById("theme-toggle-dictionary")
+const dictionarySearch = document.getElementById("dictionary-search")
+const clearSearch = document.getElementById("clear-search")
+const categoryButtons = document.querySelectorAll(".category-btn")
+const sortTermsSelect = document.getElementById("sort-terms")
+const dictionaryList = document.getElementById("dictionary-list")
+const dictionaryPlaceholder = document.getElementById("dictionary-placeholder")
+const resultsCount = document.getElementById("results-count")
+const termModal = document.getElementById("term-modal")
+const modalOverlay = document.getElementById("modal-overlay")
+const modalClose = document.getElementById("modal-close")
+const modalTermTitle = document.getElementById("modal-term-title")
+const modalTermCategory = document.getElementById("modal-term-category")
+const modalTermDefinition = document.getElementById("modal-term-definition")
+const modalTermExample = document.getElementById("modal-term-example")
+const modalTermExampleText = document.getElementById("modal-term-example-text")
+const modalTermRelated = document.getElementById("modal-term-related")
+const modalRelatedTerms = document.getElementById("modal-related-terms")
+
+// Add these variables after the existing dictionary variables
+const navTerms = document.getElementById("nav-terms")
+const navRadio = document.getElementById("nav-radio")
+const radioSection = document.getElementById("radio-procedures")
+const dictionaryResults = document.querySelector(".dictionary-results")
+
 // Remove old navigation variables
 // const navLeft = document.getElementById("nav-left")
 // const navRight = document.getElementById("nav-right")
@@ -74,19 +457,26 @@ function updateActiveNavLink() {
   // Add active class to current page
   if (currentPage === "flight-planner") {
     navFlightPlanner.classList.add("active")
-  } else {
+  } else if (currentPage === "seat-calculator") {
     navSeatCalculator.classList.add("active")
+  } else if (currentPage === "aviation-dictionary") {
+    navAviationDictionary.classList.add("active")
   }
 }
 
-// Navigation between pages (updated)
+// Navigation between pages (updated for three pages)
 function navigateToPage(page) {
   currentPage = page
 
   if (page === "seat-calculator") {
     appContainer.classList.add("slide-left")
+    appContainer.classList.remove("slide-right")
+  } else if (page === "aviation-dictionary") {
+    appContainer.classList.add("slide-right")
+    appContainer.classList.remove("slide-left")
   } else {
     appContainer.classList.remove("slide-left")
+    appContainer.classList.remove("slide-right")
   }
 
   updateActiveNavLink()
@@ -610,6 +1000,352 @@ function waitForLeafletAndInit() {
   }
 }
 
+// Dictionary functionality
+function getCategoryIcon(category) {
+  const icons = {
+    navigation: "🧭",
+    meteorology: "🌤️",
+    regulations: "📋",
+    aircraft: "✈️",
+    communication: "📡",
+    procedures: "🛬",
+  }
+  return icons[category] || "📖"
+}
+
+function getCategoryName(category) {
+  const names = {
+    navigation: "Navegação",
+    meteorology: "Meteorologia",
+    regulations: "Regulamentos",
+    aircraft: "Aeronave",
+    communication: "Comunicação",
+    procedures: "Procedimentos",
+  }
+  return names[category] || category
+}
+
+function filterTerms() {
+  const searchTerm = dictionarySearch.value.toLowerCase().trim()
+
+  filteredTerms = aviationTerms.filter((term) => {
+    const matchesCategory = currentCategory === "all" || term.category === currentCategory
+    const matchesSearch =
+      !searchTerm || term.term.toLowerCase().includes(searchTerm) || term.definition.toLowerCase().includes(searchTerm)
+
+    return matchesCategory && matchesSearch
+  })
+
+  sortFilteredTerms()
+  renderTerms()
+  updateResultsCount()
+}
+
+function sortFilteredTerms() {
+  switch (currentSort) {
+    case "alphabetical":
+      filteredTerms.sort((a, b) => a.term.localeCompare(b.term))
+      break
+    case "category":
+      filteredTerms.sort((a, b) => {
+        if (a.category === b.category) {
+          return a.term.localeCompare(b.term)
+        }
+        return a.category.localeCompare(b.category)
+      })
+      break
+    case "relevance":
+      // For relevance, we could implement a scoring system
+      // For now, just use alphabetical as fallback
+      filteredTerms.sort((a, b) => a.term.localeCompare(b.term))
+      break
+  }
+}
+
+function renderTerms() {
+  if (filteredTerms.length === 0) {
+    dictionaryList.style.display = "none"
+    dictionaryPlaceholder.style.display = "block"
+    return
+  }
+
+  dictionaryList.style.display = "grid"
+  dictionaryPlaceholder.style.display = "none"
+
+  const html = filteredTerms
+    .map(
+      (term) => `
+    <div class="term-item" data-term-id="${term.id}">
+      <div class="term-header">
+        <div>
+          <h3 class="term-title">${term.term}</h3>
+          <span class="term-category-badge">${getCategoryName(term.category)}</span>
+        </div>
+        <div class="term-icon">${getCategoryIcon(term.category)}</div>
+      </div>
+      <p class="term-preview">${term.definition}</p>
+    </div>
+  `,
+    )
+    .join("")
+
+  dictionaryList.innerHTML = html
+
+  // Add click listeners to term items
+  document.querySelectorAll(".term-item").forEach((item) => {
+    item.addEventListener("click", () => {
+      const termId = Number.parseInt(item.dataset.termId)
+      showTermModal(termId)
+    })
+  })
+}
+
+function updateResultsCount() {
+  const total = filteredTerms.length
+  const categoryText = currentCategory === "all" ? "todos os termos" : `termos de ${getCategoryName(currentCategory)}`
+
+  if (total === 0) {
+    resultsCount.textContent = "Nenhum termo encontrado"
+  } else if (total === 1) {
+    resultsCount.textContent = `Mostrando 1 termo de ${categoryText}`
+  } else {
+    resultsCount.textContent = `Mostrando ${total} termos de ${categoryText}`
+  }
+}
+
+function showTermModal(termId) {
+  const term = aviationTerms.find((t) => t.id === termId)
+  if (!term) return
+
+  modalTermTitle.textContent = term.term
+  modalTermCategory.textContent = getCategoryName(term.category)
+  modalTermDefinition.textContent = term.definition
+
+  if (term.example) {
+    modalTermExample.style.display = "block"
+    modalTermExampleText.textContent = term.example
+  } else {
+    modalTermExample.style.display = "none"
+  }
+
+  if (term.related && term.related.length > 0) {
+    modalTermRelated.style.display = "block"
+    const relatedHtml = term.related
+      .map((relatedTerm) => `<span class="related-term" data-related="${relatedTerm}">${relatedTerm}</span>`)
+      .join("")
+    modalRelatedTerms.innerHTML = relatedHtml
+
+    // Add click listeners to related terms
+    modalRelatedTerms.querySelectorAll(".related-term").forEach((relatedEl) => {
+      relatedEl.addEventListener("click", () => {
+        const relatedTermName = relatedEl.dataset.related
+        const relatedTerm = aviationTerms.find((t) => t.term === relatedTermName)
+        if (relatedTerm) {
+          showTermModal(relatedTerm.id)
+        }
+      })
+    })
+  } else {
+    modalTermRelated.style.display = "none"
+  }
+
+  termModal.style.display = "flex"
+  document.body.style.overflow = "hidden"
+}
+
+function closeTermModal() {
+  termModal.style.display = "none"
+  document.body.style.overflow = ""
+}
+
+function clearDictionarySearch() {
+  dictionarySearch.value = ""
+  filterTerms()
+}
+
+function setCategory(category) {
+  currentCategory = category
+
+  // Update category buttons
+  categoryButtons.forEach((btn) => {
+    btn.classList.remove("active")
+    if (btn.dataset.category === category) {
+      btn.classList.add("active")
+    }
+  })
+
+  filterTerms()
+}
+
+function setSortOrder(sortOrder) {
+  currentSort = sortOrder
+  filterTerms()
+}
+
+// Add this function after the existing dictionary functions
+function switchDictionarySection(section) {
+  currentDictionarySection = section
+
+  // Update navigation buttons
+  document.querySelectorAll(".dictionary-nav-btn").forEach((btn) => {
+    btn.classList.remove("active")
+  })
+
+  if (section === "terms") {
+    navTerms.classList.add("active")
+    dictionaryResults.style.display = "block"
+    radioSection.style.display = "none"
+  } else if (section === "radio") {
+    navRadio.classList.add("active")
+    dictionaryResults.style.display = "none"
+    radioSection.style.display = "block"
+  }
+}
+
+function renderPhoneticAlphabet() {
+  const container = document.getElementById("phonetic-alphabet")
+  if (!container) return
+
+  const html = phoneticAlphabet
+    .map(
+      (item) => `
+    <div class="phonetic-item">
+      <div class="phonetic-letter">${item.letter}</div>
+      <div class="phonetic-word">
+        <div class="phonetic-name">${item.word}</div>
+        <div class="phonetic-pronunciation">${item.pronunciation}</div>
+      </div>
+      <button class="phonetic-audio" onclick="speakPhonetic('${item.word}')" title="Ouvir pronúncia">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+        </svg>
+      </button>
+    </div>
+  `,
+    )
+    .join("")
+
+  container.innerHTML = html
+}
+
+function renderNumbersPronunciation() {
+  const container = document.getElementById("numbers-pronunciation")
+  if (!container) return
+
+  const html = numbersPronunciation
+    .map(
+      (item) => `
+    <div class="number-item">
+      <div class="number-digit">${item.digit}</div>
+      <div class="number-pronunciation">${item.pronunciation}</div>
+    </div>
+  `,
+    )
+    .join("")
+
+  container.innerHTML = html
+}
+
+function renderStandardPhrases() {
+  const container = document.getElementById("standard-phrases")
+  if (!container) return
+
+  const html = standardPhrases
+    .map(
+      (category) => `
+    <div class="phrase-category">
+      <div class="phrase-category-header">
+        <span class="phrase-category-icon">${category.icon}</span>
+        ${category.category}
+      </div>
+      <div class="phrase-list">
+        ${category.phrases
+          .map(
+            (phrase) => `
+          <div class="phrase-item">
+            <div class="phrase-text">${phrase.text}</div>
+            <div class="phrase-meaning">${phrase.meaning}</div>
+            <div class="phrase-example">Exemplo: ${phrase.example}</div>
+          </div>
+        `,
+          )
+          .join("")}
+      </div>
+    </div>
+  `,
+    )
+    .join("")
+
+  container.innerHTML = html
+}
+
+function renderEmergencyProcedures() {
+  const container = document.getElementById("emergency-procedures")
+  if (!container) return
+
+  const html = emergencyProcedures
+    .map(
+      (procedure) => `
+    <div class="emergency-item">
+      <div class="emergency-title">
+        <svg class="emergency-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        ${procedure.title}
+      </div>
+      <div class="emergency-description">${procedure.description}</div>
+      <div class="emergency-example">${procedure.example}</div>
+    </div>
+  `,
+    )
+    .join("")
+
+  container.innerHTML = html
+}
+
+function renderCommunicationTips() {
+  const container = document.getElementById("communication-tips")
+  if (!container) return
+
+  const html = communicationTips
+    .map(
+      (tip) => `
+    <div class="tip-item">
+      <div class="tip-title">
+        <svg class="tip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+        </svg>
+        ${tip.title}
+      </div>
+      <div class="tip-description">${tip.description}</div>
+    </div>
+  `,
+    )
+    .join("")
+
+  container.innerHTML = html
+}
+
+function speakPhonetic(word) {
+  if ("speechSynthesis" in window) {
+    const utterance = new SpeechSynthesisUtterance(word)
+    utterance.lang = "en-US"
+    utterance.rate = 0.8
+    speechSynthesis.speak(utterance)
+  }
+}
+
+function initializeRadioProcedures() {
+  renderPhoneticAlphabet()
+  renderNumbersPronunciation()
+  renderStandardPhrases()
+  renderEmergencyProcedures()
+  renderCommunicationTips()
+}
+
 // Main initialization
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM loaded, initializing app...")
@@ -727,9 +1463,66 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   }
 
+  // Set up dictionary event listeners
+  if (navAviationDictionary) {
+    navAviationDictionary.addEventListener("click", () => navigateToPage("aviation-dictionary"))
+  }
+
+  if (themeToggleDictionary) {
+    themeToggleDictionary.addEventListener("click", toggleTheme)
+  }
+
+  if (dictionarySearch) {
+    dictionarySearch.addEventListener("input", filterTerms)
+  }
+
+  if (clearSearch) {
+    clearSearch.addEventListener("click", clearDictionarySearch)
+  }
+
+  if (sortTermsSelect) {
+    sortTermsSelect.addEventListener("change", (e) => setSortOrder(e.target.value))
+  }
+
+  // Category filter buttons
+  categoryButtons.forEach((btn) => {
+    btn.addEventListener("click", () => setCategory(btn.dataset.category))
+  })
+
+  // Modal event listeners
+  if (modalOverlay) {
+    modalOverlay.addEventListener("click", closeTermModal)
+  }
+
+  if (modalClose) {
+    modalClose.addEventListener("click", closeTermModal)
+  }
+
+  // Close modal on escape key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && termModal.style.display === "flex") {
+      closeTermModal()
+    }
+  })
+
+  // Set up dictionary navigation event listeners
+  if (navTerms) {
+    navTerms.addEventListener("click", () => switchDictionarySection("terms"))
+  }
+
+  if (navRadio) {
+    navRadio.addEventListener("click", () => switchDictionarySection("radio"))
+  }
+
+  // Initialize dictionary
+  filterTerms()
+
   updateUI()
   updateExportButton()
   updateActiveNavLink()
+
+  // Initialize radio procedures
+  initializeRadioProcedures()
 })
 
 // Handle window resize for map (only if map exists)

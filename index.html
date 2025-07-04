@@ -43,7 +43,18 @@
                     </li>
                     <li class="nav-item">
                         <button class="nav-link" id="nav-seat-calculator" data-page="seat-calculator">
-                            
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                                <path d="M8 7h8"/>
+                                <path d="M8 11h8"/>
+                                <path d="M8 15h5"/>
+                            </svg>
+                            <span>Dicionário de Aviação</span>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="nav-aviation-dictionary" data-page="aviation-dictionary">
                             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4s-2 1-3.5 2.5L11 10l-8.2-1.8c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12.5l-2.5 2.5L5 14l-1.5 1.5L6 18l2.5-2.5L12.5 9l1.8 7.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1Z"/>
                             </svg>
@@ -223,6 +234,268 @@
                                 </div>
                             </div>
                         </section>
+                    </div>
+                </main>
+            </div>
+        </div>
+
+        <!-- Aviation Dictionary Page -->
+        <div class="page aviation-dictionary-page" id="aviation-dictionary">
+            <div class="container">
+                <header class="header">
+                    <div class="header-content">
+                        <div class="header-icon">
+                            <svg class="plane-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                                <path d="M8 7h8"/>
+                                <path d="M8 11h8"/>
+                                <path d="M8 15h5"/>
+                            </svg>
+                        </div>
+                        <h1 class="header-title">Dicionário de Aviação</h1>
+                        <!-- Theme Toggle Button -->
+                        <button class="theme-toggle" id="theme-toggle-dictionary" aria-label="Toggle theme">
+                            <svg class="theme-icon sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="5"/>
+                                <line x1="12" y1="1" x2="12" y2="3"/>
+                                <line x1="12" y1="21" x2="12" y2="23"/>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                                <line x1="1" y1="12" x2="3" y2="12"/>
+                                <line x1="21" y1="12" x2="23" y2="12"/>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                            </svg>
+                            <svg class="theme-icon moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="header-subtitle">
+                        Pesquise termos técnicos e jargões da aviação de forma simples e rápida
+                    </p>
+                </header>
+
+                <main class="main-content">
+                    <!-- Search and Filter Section -->
+                    <section class="search-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="11" cy="11" r="8"/>
+                                        <path d="M21 21l-4.35-4.35"/>
+                                    </svg>
+                                    Pesquisar Termos
+                                </h2>
+                            </div>
+                            <div class="card-content">
+                                <div class="search-form">
+                                    <div class="search-input-group">
+                                        <input type="text" id="dictionary-search" class="form-input search-input" placeholder="Digite um termo de aviação...">
+                                        <button type="button" id="clear-search" class="btn btn-outline btn-icon-only" title="Limpar pesquisa">
+                                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                                <line x1="6" y1="6" x2="18" y2="18"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="category-filters">
+                                        <button class="category-btn active" data-category="all">Todos</button>
+                                        <button class="category-btn" data-category="navigation">Navegação</button>
+                                        <button class="category-btn" data-category="meteorology">Meteorologia</button>
+                                        <button class="category-btn" data-category="regulations">Regulamentos</button>
+                                        <button class="category-btn" data-category="aircraft">Aeronave</button>
+                                        <button class="category-btn" data-category="communication">Comunicação</button>
+                                        <button class="category-btn" data-category="procedures">Procedimentos</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Dictionary Results -->
+                    <section class="dictionary-results">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-header-content">
+                                    <div class="card-title-group">
+                                        <h2 class="card-title">
+                                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                                            </svg>
+                                            Termos Encontrados
+                                        </h2>
+                                        <p class="card-description" id="results-count">
+                                            Mostrando todos os termos disponíveis
+                                        </p>
+                                    </div>
+                                    <div class="sort-controls">
+                                        <select id="sort-terms" class="form-input">
+                                            <option value="alphabetical">A-Z</option>
+                                            <option value="category">Por Categoria</option>
+                                            <option value="relevance">Relevância</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <div id="dictionary-list" class="dictionary-list">
+                                    <!-- Terms will be populated here -->
+                                </div>
+                                <div id="dictionary-placeholder" class="placeholder-content" style="display: none;">
+                                    <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="11" cy="11" r="8"/>
+                                        <path d="M21 21l-4.35-4.35"/>
+                                    </svg>
+                                    <p>Nenhum termo encontrado para sua pesquisa</p>
+                                    <p class="placeholder-subtitle">Tente usar palavras-chave diferentes ou selecione outra categoria</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <div class="dictionary-nav">
+                        <button class="dictionary-nav-btn active" id="nav-terms" data-section="terms">
+                            <svg class="nav-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            </svg>
+                            Termos
+                        </button>
+                        <button class="dictionary-nav-btn" id="nav-radio" data-section="radio">
+                            <svg class="nav-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 16V9h14v7H5z"/>
+                                <path d="M1 9v7a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V9"/>
+                                <path d="M7 3v6"/>
+                                <path d="M17 3v6"/>
+                            </svg>
+                            Procedimentos de Rádio
+                        </button>
+                    </div>
+
+                    <!-- Radio Procedures Section -->
+                    <section class="radio-procedures-section" id="radio-procedures" style="display: none;">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M5 16V9h14v7H5z"/>
+                                        <path d="M1 9v7a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V9"/>
+                                        <path d="M7 3v6"/>
+                                        <path d="M17 3v6"/>
+                                    </svg>
+                                    Procedimentos de Rádio e Alfabeto Fonético
+                                </h2>
+                            </div>
+                            <div class="card-content">
+                                <div class="radio-content">
+                                    <!-- Phonetic Alphabet -->
+                                    <div class="radio-section">
+                                        <h3 class="radio-section-title">
+                                            <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                                <polyline points="14,2 14,8 20,8"/>
+                                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                                <polyline points="10,9 9,9 8,9"/>
+                                            </svg>
+                                            Alfabeto Fonético Internacional (ICAO)
+                                        </h3>
+                                        <p class="radio-description">
+                                            O alfabeto fonético é usado para soletrar palavras e códigos de forma clara e sem ambiguidade nas comunicações aeronáuticas.
+                                        </p>
+                                        <div class="phonetic-grid" id="phonetic-alphabet">
+                                            <!-- Phonetic alphabet will be populated here -->
+                                        </div>
+                                    </div>
+
+                                    <!-- Numbers -->
+                                    <div class="radio-section">
+                                        <h3 class="radio-section-title">
+                                            <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                                <path d="M9 9h6v6H9z"/>
+                                            </svg>
+                                            Pronúncia de Números
+                                        </h3>
+                                        <div class="numbers-grid" id="numbers-pronunciation">
+                                            <!-- Numbers will be populated here -->
+                                        </div>
+                                    </div>
+
+                                    <!-- Standard Phrases -->
+                                    <div class="radio-section">
+                                        <h3 class="radio-section-title">
+                                            <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                            </svg>
+                                            Frases Padrão de Comunicação
+                                        </h3>
+                                        <div class="phrases-container" id="standard-phrases">
+                                            <!-- Standard phrases will be populated here -->
+                                        </div>
+                                    </div>
+
+                                    <!-- Emergency Procedures -->
+                                    <div class="radio-section">
+                                        <h3 class="radio-section-title">
+                                            <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                                <line x1="12" y1="9" x2="12" y2="13"/>
+                                                <line x1="12" y1="17" x2="12.01" y2="17"/>
+                                            </svg>
+                                            Procedimentos de Emergência
+                                        </h3>
+                                        <div class="emergency-procedures" id="emergency-procedures">
+                                            <!-- Emergency procedures will be populated here -->
+                                        </div>
+                                    </div>
+
+                                    <!-- Communication Tips -->
+                                    <div class="radio-section">
+                                        <h3 class="radio-section-title">
+                                            <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                            </svg>
+                                            Dicas de Comunicação
+                                        </h3>
+                                        <div class="tips-container" id="communication-tips">
+                                            <!-- Communication tips will be populated here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Term Detail Modal -->
+                    <div id="term-modal" class="term-modal" style="display: none;">
+                        <div class="modal-overlay" id="modal-overlay"></div>
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="modal-title" id="modal-term-title">Termo</h3>
+                                <button class="modal-close" id="modal-close" aria-label="Fechar">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="18" y1="6" x2="6" y2="18"/>
+                                        <line x1="6" y1="6" x2="18" y2="18"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="term-category" id="modal-term-category"></div>
+                                <div class="term-definition" id="modal-term-definition"></div>
+                                <div class="term-example" id="modal-term-example" style="display: none;">
+                                    <h4>Exemplo de uso:</h4>
+                                    <p id="modal-term-example-text"></p>
+                                </div>
+                                <div class="term-related" id="modal-term-related" style="display: none;">
+                                    <h4>Termos relacionados:</h4>
+                                    <div class="related-terms" id="modal-related-terms"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </main>
             </div>
