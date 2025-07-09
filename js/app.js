@@ -346,6 +346,24 @@ const communicationTips = [
   },
 ]
 
+// Weather API configuration
+const WEATHER_API_KEY = "your_api_key_here" // You'll need to get a free API key from OpenWeatherMap
+const WEATHER_API_BASE = "https://api.openweathermap.org/data/2.5"
+
+// Weather variables
+let currentWeatherData = null
+let forecastData = null
+
+// Weather DOM elements
+const weatherCity = document.getElementById("weather-city")
+const getWeatherBtn = document.getElementById("get-weather")
+const refreshWeatherBtn = document.getElementById("refresh-weather")
+const weatherLoading = document.getElementById("weather-loading")
+const weatherError = document.getElementById("weather-error")
+const currentWeather = document.getElementById("current-weather")
+const forecastWeather = document.getElementById("forecast-weather")
+const flightConditions = document.getElementById("flight-conditions")
+
 // Dictionary variables
 let filteredTerms = [...aviationTerms]
 let currentCategory = "all"
@@ -1138,6 +1156,8 @@ function handleMapClick(e) {
     if (markers.length === 1) {
       departureInput.value = `${lat.toFixed(4)}, ${lng.toFixed(4)}`
       departureBadge.classList.add("active")
+      // Load weather for departure location
+      fetchWeatherData(lat, lng, "Local de Decolagem")
     } else {
       landingInput.value = `${lat.toFixed(4)}, ${lng.toFixed(4)}`
       landingBadge.classList.add("active")
@@ -1234,6 +1254,9 @@ async function calculateFlight() {
       fuelConsumption,
       windInfo,
     })
+
+    // Load weather data for departure location
+    await fetchWeatherData(lat1, lon1, "Local de Decolagem")
   } catch (error) {
     showError(error.message)
   } finally {
@@ -1607,6 +1630,319 @@ function initializeRadioProcedures() {
   renderCommunicationTips()
 }
 
+// Weather functions
+async function fetchWeatherData(lat, lon, locationName = "Local de Decolagem") {
+  try {
+    showWeatherLoading(true)
+    hideWeatherError()
+
+    // For demo purposes, we'll use mock data since you need an API key
+    // Replace this with actual API calls when you have a key
+    const mockCurrentWeather = {
+      name: locationName,
+      coord: { lat, lon },
+      main: {
+        temp: Math.round(Math.random() * 15 + 15), // 15-30°C
+        feels_like: Math.round(Math.random() * 15 + 15),
+        humidity: Math.round(Math.random() * 40 + 40), // 40-80%
+        pressure: Math.round(Math.random() * 50 + 1000), // 1000-1050 hPa
+      },
+      weather: [
+        {
+          main: ["Clear", "Clouds", "Rain", "Mist"][Math.floor(Math.random() * 4)],
+          description: ["céu limpo", "parcialmente nublado", "chuva leve", "neblina"][Math.floor(Math.random() * 4)],
+          icon: "01d",
+        },
+      ],
+      wind: {
+        speed: Math.round(Math.random() * 20 + 5), // 5-25 km/h
+        deg: Math.round(Math.random() * 360),
+      },
+      visibility: Math.round(Math.random() * 5000 + 5000), // 5-10 km
+    }
+
+    const mockForecast = {
+      list: Array.from({ length: 5 }, (_, i) => ({
+        dt: Date.now() / 1000 + i * 24 * 60 * 60,
+        main: {
+          temp_max: Math.round(Math.random() * 10 + 20),
+          temp_min: Math.round(Math.random() * 10 + 10),
+        },
+        weather: [
+          {
+            main: ["Clear", "Clouds", "Rain"][Math.floor(Math.random() * 3)],
+            description: ["céu limpo", "parcialmente nublado", "chuva leve"][Math.floor(Math.random() * 3)],
+            icon: "01d",
+          },
+        ],
+        wind: {
+          speed: Math.round(Math.random() * 15 + 5),
+        },
+      })),
+    }
+
+    // Simulate API delay
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
+    currentWeatherData = mockCurrentWeather
+    forecastData = mockForecast
+
+    displayCurrentWeather(currentWeatherData)
+    displayForecast(forecastData)
+    assessFlightConditions(currentWeatherData)
+  } catch (error) {
+    console.error("Error fetching weather data:", error)
+    showWeatherError("Erro ao carregar dados meteorológicos. Tente novamente.")
+  } finally {
+    showWeatherLoading(false)
+  }
+}
+
+function displayCurrentWeather(data) {
+  document.getElementById("current-temp").textContent = Math.round(data.main.temp)
+  document.getElementById("current-location").textContent =
+    `${data.name} (${data.coord.lat.toFixed(2)}, ${data.coord.lon.toFixed(2)})`
+  document.getElementById("current-description").textContent = data.weather[0].description
+  document.getElementById("current-feels").textContent = Math.round(data.main.feels_like)
+
+  document.getElementById("current-wind").textContent = `${data.wind.speed} km/h ${getWindDirection(data.wind.deg)}`
+  document.getElementById("current-visibility").textContent = `${(data.visibility / 1000).toFixed(1)} km`
+  document.getElementById("current-humidity").textContent = `${data.main.humidity}%`
+  document.getElementById("current-pressure").textContent = `${data.main.pressure} hPa`
+
+  // Show weather icon placeholder (in real implementation, you'd use data.weather[0].icon)
+  const iconPlaceholder = document.getElementById("weather-icon-placeholder")
+  const iconImg = document.getElementById("current-icon")
+  iconPlaceholder.style.display = "flex"
+  iconImg.style.display = "none"
+
+  currentWeather.style.display = "block"
+}
+
+function displayForecast(data) {
+  const forecastGrid = document.getElementById("forecast-grid")
+
+  const forecastHTML = data.list
+    .map((item) => {
+      const date = new Date(item.dt * 1000)
+      const dayName = date.toLocaleDateString("pt-BR", { weekday: "short" })
+
+      return `
+      <div class="forecast-item">
+        <div class="forecast-day">${dayName}</div>
+        <div class="forecast-icon">
+          <div class="forecast-icon-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="forecast-temps">
+          <span class="forecast-temp-max">${Math.round(item.main.temp_max)}°</span>
+          <span class="forecast-temp-min">${Math.round(item.main.temp_min)}°</span>
+        </div>
+        <div class="forecast-description">${item.weather[0].description}</div>
+        <div class="forecast-wind">Vento: ${item.wind.speed} km/h</div>
+      </div>
+    `
+    })
+    .join("")
+
+  forecastGrid.innerHTML = forecastHTML
+  forecastWeather.style.display = "block"
+}
+
+function assessFlightConditions(data) {
+  const conditions = []
+
+  // Wind assessment
+  const windSpeed = data.wind.speed
+  if (windSpeed <= 15) {
+    conditions.push({
+      type: "good",
+      icon: "check-circle",
+      label: "Condições de Vento",
+      value: `${windSpeed} km/h - Favorável para VFR`,
+    })
+  } else if (windSpeed <= 25) {
+    conditions.push({
+      type: "caution",
+      icon: "alert-triangle",
+      label: "Condições de Vento",
+      value: `${windSpeed} km/h - Atenção redobrada`,
+    })
+  } else {
+    conditions.push({
+      type: "poor",
+      icon: "x-circle",
+      label: "Condições de Vento",
+      value: `${windSpeed} km/h - Não recomendado para VFR`,
+    })
+  }
+
+  // Visibility assessment
+  const visibility = data.visibility / 1000
+  if (visibility >= 8) {
+    conditions.push({
+      type: "good",
+      icon: "eye",
+      label: "Visibilidade",
+      value: `${visibility.toFixed(1)} km - Excelente para VFR`,
+    })
+  } else if (visibility >= 5) {
+    conditions.push({
+      type: "caution",
+      icon: "eye",
+      label: "Visibilidade",
+      value: `${visibility.toFixed(1)} km - Adequada com cuidado`,
+    })
+  } else {
+    conditions.push({
+      type: "poor",
+      icon: "eye-off",
+      label: "Visibilidade",
+      value: `${visibility.toFixed(1)} km - Inadequada para VFR`,
+    })
+  }
+
+  // Weather condition assessment
+  const weatherMain = data.weather[0].main.toLowerCase()
+  if (weatherMain === "clear" || weatherMain === "few clouds") {
+    conditions.push({
+      type: "good",
+      icon: "sun",
+      label: "Condições Gerais",
+      value: "Céu claro - Ideal para VFR",
+    })
+  } else if (weatherMain === "clouds") {
+    conditions.push({
+      type: "caution",
+      icon: "cloud",
+      label: "Condições Gerais",
+      value: "Nublado - VFR com atenção",
+    })
+  } else {
+    conditions.push({
+      type: "poor",
+      icon: "cloud-rain",
+      label: "Condições Gerais",
+      value: "Condições adversas - IFR recomendado",
+    })
+  }
+
+  // Pressure assessment
+  const pressure = data.main.pressure
+  if (pressure >= 1013) {
+    conditions.push({
+      type: "good",
+      icon: "trending-up",
+      label: "Pressão Atmosférica",
+      value: `${pressure} hPa - Estável`,
+    })
+  } else {
+    conditions.push({
+      type: "caution",
+      icon: "trending-down",
+      label: "Pressão Atmosférica",
+      value: `${pressure} hPa - Em declínio`,
+    })
+  }
+
+  displayFlightConditions(conditions)
+}
+
+function displayFlightConditions(conditions) {
+  const assessmentContainer = document.getElementById("conditions-assessment")
+
+  const conditionsHTML = conditions
+    .map((condition) => {
+      const iconSVG = getConditionIcon(condition.icon)
+
+      return `
+      <div class="condition-item condition-${condition.type}">
+        <div class="condition-icon">
+          ${iconSVG}
+        </div>
+        <div class="condition-content">
+          <div class="condition-label">${condition.label}</div>
+          <div class="condition-value">${condition.value}</div>
+        </div>
+      </div>
+    `
+    })
+    .join("")
+
+  assessmentContainer.innerHTML = conditionsHTML
+  flightConditions.style.display = "block"
+}
+
+function getConditionIcon(iconName) {
+  const icons = {
+    "check-circle":
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>',
+    "alert-triangle":
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+    "x-circle":
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+    eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+    "eye-off":
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>',
+    sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>',
+    cloud:
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>',
+    "cloud-rain":
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="16" y1="13" x2="16" y2="21"/><line x1="8" y1="13" x2="8" y2="21"/><line x1="12" y1="15" x2="12" y2="23"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/></svg>',
+    "trending-up":
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/><polyline points="17,6 23,6 23,12"/></svg>',
+    "trending-down":
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23,18 13.5,8.5 8.5,13.5 1,6"/><polyline points="17,18 23,18 23,12"/></svg>',
+  }
+
+  return icons[iconName] || icons["alert-triangle"]
+}
+
+function getWindDirection(degrees) {
+  const directions = [
+    "N",
+    "NNE",
+    "NE",
+    "ENE",
+    "E",
+    "ESE",
+    "SE",
+    "SSE",
+    "S",
+    "SSW",
+    "SW",
+    "WSW",
+    "W",
+    "WNW",
+    "NW",
+    "NNW",
+  ]
+  const index = Math.round(degrees / 22.5) % 16
+  return directions[index]
+}
+
+function showWeatherLoading(show) {
+  weatherLoading.style.display = show ? "flex" : "none"
+  if (show) {
+    currentWeather.style.display = "none"
+    forecastWeather.style.display = "none"
+    flightConditions.style.display = "none"
+  }
+}
+
+function showWeatherError(message) {
+  weatherError.querySelector(".alert-text").textContent = message
+  weatherError.style.display = "flex"
+}
+
+function hideWeatherError() {
+  weatherError.style.display = "none"
+}
+
+// Add weather event listeners to the existing DOMContentLoaded event
 // Main initialization
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM loaded, initializing app...")
@@ -1735,6 +2071,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (departureInput.value && markers.length === 0) {
         departureBadge.classList.add("active")
       }
+      // Load weather when departure coordinates are entered
+      loadDepartureWeather()
     })
   }
 
@@ -1806,6 +2144,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Initialize radio procedures
   initializeRadioProcedures()
+
+  // Set up weather event listeners
+  if (refreshWeatherBtn) {
+    refreshWeatherBtn.addEventListener("click", loadDepartureWeather)
+  }
+
+  // Load default weather on page load
+  setTimeout(() => {
+    if (currentPage === "flight-planner") {
+      // Load weather when map markers are placed
+    }
+  }, 1000)
 })
 
 // Handle window resize for map (only if map exists)
