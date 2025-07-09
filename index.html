@@ -32,18 +32,7 @@
                 </div>
                 <ul class="nav-list">
                     <li class="nav-item">
-                        <button class="nav-link" id="nav-flight-planner" data-page="flight-planner">
-                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                                <line x1="8" y1="21" x2="16" y2="21"/>
-                                <line x1="12" y1="17" x2="12" y2="21"/>
-                            </svg>
-                            <span>Calculadora de Assentos</span>
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" id="nav-seat-calculator" data-page="seat-calculator">
-
+                        <button class="nav-link" id="nav-seat-calculator" data-page="seat-calculator">                            
                             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
                                 <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
@@ -60,6 +49,16 @@
                                 <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4s-2 1-3.5 2.5L11 10l-8.2-1.8c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12.5l-2.5 2.5L5 14l-1.5 1.5L6 18l2.5-2.5L12.5 9l1.8 7.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1Z"/>
                             </svg>
                             <span>Simulador VFR</span>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="nav-flight-planner" data-page="flight-planner">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                <line x1="8" y1="21" x2="16" y2="21"/>
+                                <line x1="12" y1="17" x2="12" y2="21"/>
+                            </svg>
+                            <span>Calculadora de Assentos</span>
                         </button>
                     </li>
                     <li class="nav-item">
@@ -1167,6 +1166,251 @@
                         </section>
                     </div>
 
+                    <!-- Enhanced Flight Metrics -->
+                    <section class="enhanced-metrics-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M9 11H5a2 2 0 0 0-2 2v3c0 1.1.9 2 2 2h4l3 3h7a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7l-3 3z"/>
+                                    </svg>
+                                    Métricas Avançadas de Voo
+                                </h2>
+                            </div>
+                            <div class="card-content">
+                                <div id="enhanced-metrics-content">
+                                    <div id="enhanced-metrics-data" style="display: none;">
+                                        <div class="metrics-grid">
+                                            <!-- Navigation Metrics -->
+                                            <div class="metric-category">
+                                                <h3 class="metric-category-title">
+                                                    <svg class="metric-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+                                                    </svg>
+                                                    Navegação
+                                                </h3>
+                                                <div class="metric-items">
+                                                    <div class="metric-item">
+                                                        <span class="metric-label">Rumo Magnético</span>
+                                                        <span class="metric-value" id="magnetic-heading">-</span>
+                                                    </div>
+                                                    <div class="metric-item">
+                                                        <span class="metric-label">Distância Náutica</span>
+                                                        <span class="metric-value" id="nautical-distance">-</span>
+                                                    </div>
+                                                    <div class="metric-item">
+                                                        <span class="metric-label">Velocidade (nós)</span>
+                                                        <span class="metric-value" id="speed-knots">-</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Performance Metrics -->
+                                            <div class="metric-category">
+                                                <h3 class="metric-category-title">
+                                                    <svg class="metric-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                                                        <path d="M2 17l10 5 10-5"/>
+                                                        <path d="M2 12l10 5 10-5"/>
+                                                    </svg>
+                                                    Performance
+                                                </h3>
+                                                <div class="metric-items">
+                                                    <div class="metric-item">
+                                                        <span class="metric-label">Consumo por NM</span>
+                                                        <span class="metric-value" id="fuel-per-nm">-</span>
+                                                    </div>
+                                                    <div class="metric-item">
+                                                        <span class="metric-label">Altitude Recomendada</span>
+                                                        <span class="metric-value" id="recommended-altitude">-</span>
+                                                    </div>
+                                                    <div class="metric-item">
+                                                        <span class="metric-label">Reserva de Combustível</span>
+                                                        <span class="metric-value" id="fuel-reserve">-</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Time Metrics -->
+                                            <div class="metric-category">
+                                                <h3 class="metric-category-title">
+                                                    <svg class="metric-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <circle cx="12" cy="12" r="10"/>
+                                                        <polyline points="12,6 12,12 16,14"/>
+                                                    </svg>
+                                                    Tempos
+                                                </h3>
+                                                <div class="metric-items">
+                                                    <div class="metric-item">
+                                                        <span class="metric-label">ETA (Estimado)</span>
+                                                        <span class="metric-value" id="estimated-arrival">-</span>
+                                                    </div>
+                                                    <div class="metric-item">
+                                                        <span class="metric-label">Tempo com Reserva</span>
+                                                        <span class="metric-value" id="time-with-reserve">-</span>
+                                                    </div>
+                                                    <div class="metric-item">
+                                                        <span class="metric-label">Autonomia Total</span>
+                                                        <span class="metric-value" id="total-endurance">-</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Safety Metrics -->
+                                            <div class="metric-category">
+                                                <h3 class="metric-category-title">
+                                                    <svg class="metric-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                                    </svg>
+                                                    Segurança
+                                                </h3>
+                                                <div class="metric-items">
+                                                    <div class="metric-item">
+                                                        <span class="metric-label">Margem de Segurança</span>
+                                                        <span class="metric-value" id="safety-margin">-</span>
+                                                    </div>
+                                                    <div class="metric-item">
+                                                        <span class="metric-label">Alternativas</span>
+                                                        <span class="metric-value" id="alternate-airports">-</span>
+                                                    </div>
+                                                    <div class="metric-item">
+                                                        <span class="metric-label">Risco Meteorológico</span>
+                                                        <span class="metric-value" id="weather-risk">-</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div id="enhanced-metrics-placeholder">
+                                        <div class="placeholder-content">
+                                            <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M9 11H5a2 2 0 0 0-2 2v3c0 1.1.9 2 2 2h4l3 3h7a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-7l-3 3z"/>
+                                            </svg>
+                                            <p>Métricas avançadas aparecerão após o cálculo do planejamento</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Flight Summary Card -->
+                    <section class="flight-summary-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                        <polyline points="14,2 14,8 20,8"/>
+                                        <line x1="16" y1="13" x2="8" y2="13"/>
+                                        <line x1="16" y1="17" x2="8" y2="17"/>
+                                        <polyline points="10,9 9,9 8,9"/>
+                                    </svg>
+                                    Resumo do Plano de Voo
+                                </h2>
+                            </div>
+                            <div class="card-content">
+                                <div id="flight-summary-content">
+                                    <div id="flight-summary-data" style="display: none;">
+                                        <div class="summary-sections">
+                                            <!-- Route Summary -->
+                                            <div class="summary-section">
+                                                <h4 class="summary-title">Rota</h4>
+                                                <div class="summary-details">
+                                                    <div class="summary-item">
+                                                        <span class="summary-label">Decolagem:</span>
+                                                        <span class="summary-value" id="summary-departure">-</span>
+                                                    </div>
+                                                    <div class="summary-item">
+                                                        <span class="summary-label">Pouso:</span>
+                                                        <span class="summary-value" id="summary-arrival">-</span>
+                                                    </div>
+                                                    <div class="summary-item">
+                                                        <span class="summary-label">Rota Direta:</span>
+                                                        <span class="summary-value" id="summary-route">-</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Fuel Planning -->
+                                            <div class="summary-section">
+                                                <h4 class="summary-title">Combustível</h4>
+                                                <div class="summary-details">
+                                                    <div class="summary-item">
+                                                        <span class="summary-label">Consumo Planejado:</span>
+                                                        <span class="summary-value" id="summary-planned-fuel">-</span>
+                                                    </div>
+                                                    <div class="summary-item">
+                                                        <span class="summary-label">Reserva (45min):</span>
+                                                        <span class="summary-value" id="summary-reserve-fuel">-</span>
+                                                    </div>
+                                                    <div class="summary-item">
+                                                        <span class="summary-label">Total Necessário:</span>
+                                                        <span class="summary-value" id="summary-total-fuel">-</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Weather Summary -->
+                                            <div class="summary-section">
+                                                <h4 class="summary-title">Condições</h4>
+                                                <div class="summary-details">
+                                                    <div class="summary-item">
+                                                        <span class="summary-label">Condições VFR:</span>
+                                                        <span class="summary-value" id="summary-vfr-conditions">-</span>
+                                                    </div>
+                                                    <div class="summary-item">
+                                                        <span class="summary-label">Vento Predominante:</span>
+                                                        <span class="summary-value" id="summary-wind-conditions">-</span>
+                                                    </div>
+                                                    <div class="summary-item">
+                                                        <span class="summary-label">Visibilidade:</span>
+                                                        <span class="summary-value" id="summary-visibility">-</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Action Buttons -->
+                                        <div class="summary-actions">
+                                            <button class="btn btn-primary" id="export-flight-plan">
+                                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                                    <polyline points="7,10 12,15 17,10"/>
+                                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                                </svg>
+                                                Exportar Plano de Voo
+                                            </button>
+                                            <button class="btn btn-outline" id="share-flight-plan">
+                                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <circle cx="18" cy="5" r="3"/>
+                                                    <circle cx="6" cy="12" r="3"/>
+                                                    <circle cx="18" cy="19" r="3"/>
+                                                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                                                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                                                </svg>
+                                                Compartilhar
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div id="flight-summary-placeholder">
+                                        <div class="placeholder-content">
+                                            <svg class="placeholder-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                                <polyline points="14,2 14,8 20,8"/>
+                                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                                <polyline points="10,9 9,9 8,9"/>
+                                            </svg>
+                                            <p>Resumo do plano de voo será gerado após o cálculo</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                     <!-- Weather Forecast Section -->
                     <section class="weather-section">
                         <div class="card">

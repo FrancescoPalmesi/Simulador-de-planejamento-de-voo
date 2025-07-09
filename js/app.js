@@ -1275,10 +1275,317 @@ function displayResults(results) {
   resultsPlaceholder.style.display = "none"
 }
 
-// Hide results
+// Enhanced metrics calculation and display
+function displayEnhancedMetrics(results, departureCoords, landingCoords) {
+  const [lat1, lon1] = departureCoords
+  const [lat2, lon2] = landingCoords
+
+  // Calculate magnetic heading (simplified - in real implementation, use magnetic declination)
+  const bearing = calculateBearing(lat1, lon1, lat2, lon2)
+  const magneticHeading = Math.round(bearing)
+
+  // Convert distance to nautical miles
+  const nauticalDistance = (results.distance * 0.539957).toFixed(1)
+
+  // Convert speed to knots
+  const speedKnots = Math.round(Number.parseFloat(airspeedInput.value) * 0.539957)
+
+  // Calculate fuel consumption per nautical mile
+  const fuelPerNM = (results.fuelConsumption / Number.parseFloat(nauticalDistance)).toFixed(2)
+
+  // Calculate recommended altitude (simplified formula)
+  const recommendedAltitude = Math.min(Math.max(Math.round(results.distance * 50), 1500), 8500)
+
+  // Calculate fuel reserve (45 minutes at current consumption rate)
+  const fuelReserve = (Number.parseFloat(fuelBurnInput.value) * 0.75).toFixed(1)
+
+  // Calculate ETA
+  const now = new Date()
+  const etaTime = new Date(now.getTime() + results.flightTime * 60 * 60 * 1000)
+  const eta = etaTime.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+
+  // Calculate time with reserve
+  const timeWithReserve = (results.flightTime + 0.75).toFixed(2)
+
+  // Calculate total endurance
+  const totalFuel = results.fuelConsumption + Number.parseFloat(fuelReserve)
+  const totalEndurance = (totalFuel / Number.parseFloat(fuelBurnInput.value)).toFixed(2)
+
+  // Safety margin calculation
+  const safetyMargin = ((Number.parseFloat(fuelReserve) / results.fuelConsumption) * 100).toFixed(0)
+
+  // Weather risk assessment
+  const weatherRisk = assessWeatherRisk()
+
+  // Update enhanced metrics display
+  document.getElementById("magnetic-heading").textContent = `${magneticHeading}°`
+  document.getElementById("nautical-distance").textContent = `${nauticalDistance} NM`
+  document.getElementById("speed-knots").textContent = `${speedKnots} kt`
+  document.getElementById("fuel-per-nm").textContent = `${fuelPerNM} L/NM`
+  document.getElementById("recommended-altitude").textContent = `${recommendedAltitude} ft`
+  document.getElementById("fuel-reserve").textContent = `${fuelReserve} L`
+  document.getElementById("estimated-arrival").textContent = eta
+  document.getElementById("time-with-reserve").textContent = `${timeWithReserve} h`
+  document.getElementById("total-endurance").textContent = `${totalEndurance} h`
+  document.getElementById("safety-margin").textContent = `${safetyMargin}%`
+  document.getElementById("alternate-airports").textContent = "Consultar NOTAM"
+  document.getElementById("weather-risk").textContent = weatherRisk
+
+  // Apply status classes
+  applySafetyClasses(safetyMargin, weatherRisk)
+
+  // Show enhanced metrics
+  document.getElementById("enhanced-metrics-data").style.display = "block"
+  document.getElementById("enhanced-metrics-placeholder").style.display = "none"
+}
+
+function displayFlightSummary(results, departureCoords, landingCoords) {
+  const [lat1, lon1] = departureCoords
+  const [lat2, lon2] = landingCoords
+
+  // Format coordinates for display
+  const departureStr = `${lat1.toFixed(4)}, ${lon1.toFixed(4)}`
+  const arrivalStr = `${lat2.toFixed(4)}, ${lon2.toFixed(4)}`
+
+  // Calculate bearing for route
+  const bearing = calculateBearing(lat1, lon1, lat2, lon2)
+  const routeStr = `${Math.round(bearing)}° / ${results.distance.toFixed(0)} km`
+
+  // Fuel calculations
+  const plannedFuel = results.fuelConsumption.toFixed(1)
+  const reserveFuel = (Number.parseFloat(fuelBurnInput.value) * 0.75).toFixed(1)
+  const totalFuel = (Number.parseFloat(plannedFuel) + Number.parseFloat(reserveFuel)).toFixed(1)
+
+  // Weather summary
+  const vfrConditions = getVFRConditionsSummary()
+  const windConditions = `${results.windInfo.speed.toFixed(0)} km/h ${getWindDirection(results.windInfo.deg)}`
+  const visibility = currentWeatherData ? `${(currentWeatherData.visibility / 1000).toFixed(1)} km` : "N/A"
+
+  // Update flight summary display
+  document.getElementById("summary-departure").textContent = departureStr
+  document.getElementById("summary-arrival").textContent = arrivalStr
+  document.getElementById("summary-route").textContent = routeStr
+  document.getElementById("summary-planned-fuel").textContent = `${plannedFuel} L`
+  document.getElementById("summary-reserve-fuel").textContent = `${reserveFuel} L`
+  document.getElementById("summary-total-fuel").textContent = `${totalFuel} L`
+  document.getElementById("summary-vfr-conditions").textContent = vfrConditions
+  document.getElementById("summary-wind-conditions").textContent = windConditions
+  document.getElementById("summary-visibility").textContent = visibility
+
+  // Show flight summary
+  document.getElementById("flight-summary-data").style.display = "block"
+  document.getElementById("flight-summary-placeholder").style.display = "none"
+}
+
+// Helper functions
+function calculateBearing(lat1, lon1, lat2, lon2) {
+  const toRad = (value) => (value * Math.PI) / 180
+  const toDeg = (value) => (value * 180) / Math.PI
+
+  const dLon = toRad(lon2 - lon1)
+  const lat1Rad = toRad(lat1)
+  const lat2Rad = toRad(lat2)
+
+  const y = Math.sin(dLon) * Math.cos(lat2Rad)
+  const x = Math.cos(lat1Rad) * Math.sin(lat2Rad) - Math.sin(lat1Rad) * Math.cos(lat2Rad) * Math.cos(dLon)
+
+  const bearing = toDeg(Math.atan2(y, x))
+  return (bearing + 360) % 360
+}
+
+function assessWeatherRisk() {
+  if (!currentWeatherData) return "N/A"
+
+  const windSpeed = currentWeatherData.wind.speed
+  const visibility = currentWeatherData.visibility / 1000
+  const weatherMain = currentWeatherData.weather[0].main.toLowerCase()
+
+  if (windSpeed > 25 || visibility < 5 || weatherMain.includes("rain") || weatherMain.includes("storm")) {
+    return "Alto"
+  } else if (windSpeed > 15 || visibility < 8 || weatherMain.includes("cloud")) {
+    return "Moderado"
+  } else {
+    return "Baixo"
+  }
+}
+
+function getVFRConditionsSummary() {
+  if (!currentWeatherData) return "N/A"
+
+  const visibility = currentWeatherData.visibility / 1000
+  const weatherMain = currentWeatherData.weather[0].main.toLowerCase()
+
+  if (visibility >= 8 && (weatherMain === "clear" || weatherMain === "few clouds")) {
+    return "Excelente"
+  } else if (visibility >= 5 && weatherMain !== "rain") {
+    return "Adequado"
+  } else {
+    return "Limitado"
+  }
+}
+
+function applySafetyClasses(safetyMargin, weatherRisk) {
+  const safetyElement = document.getElementById("safety-margin")
+  const weatherElement = document.getElementById("weather-risk")
+
+  // Safety margin classes
+  safetyElement.classList.remove("good", "warning", "danger")
+  if (Number.parseFloat(safetyMargin) >= 50) {
+    safetyElement.classList.add("good")
+  } else if (Number.parseFloat(safetyMargin) >= 25) {
+    safetyElement.classList.add("warning")
+  } else {
+    safetyElement.classList.add("danger")
+  }
+
+  // Weather risk classes
+  weatherElement.classList.remove("good", "warning", "danger")
+  if (weatherRisk === "Baixo") {
+    weatherElement.classList.add("good")
+  } else if (weatherRisk === "Moderado") {
+    weatherElement.classList.add("warning")
+  } else {
+    weatherElement.classList.add("danger")
+  }
+}
+
+function exportFlightPlan() {
+  // Create a comprehensive flight plan export
+  const printWindow = window.open("", "_blank")
+
+  if (!printWindow) {
+    alert("Por favor, permita pop-ups para exportar o plano de voo")
+    return
+  }
+
+  const departureCoords = departureInput.value.split(",").map(Number)
+  const landingCoords = landingInput.value.split(",").map(Number)
+
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html lang="pt-br">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale: 1.0">
+      <title>Plano de Voo VFR - ${new Date().toLocaleDateString("pt-BR")}</title>
+      <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; color: #333; }
+        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #3b82f6; padding-bottom: 20px; }
+        .section { margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; }
+        .section h3 { color: #3b82f6; margin-top: 0; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+        .item { padding: 8px; background: #f8f9fa; border-radius: 4px; }
+        .item strong { color: #1565c0; }
+        @media print { body { margin: 0; } }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <h1>Plano de Voo VFR</h1>
+        <p>Gerado em ${new Date().toLocaleString("pt-BR")}</p>
+      </div>
+      
+      <div class="section">
+        <h3>Informações da Rota</h3>
+        <div class="grid">
+          <div class="item"><strong>Decolagem:</strong> ${departureCoords[0].toFixed(4)}, ${departureCoords[1].toFixed(4)}</div>
+          <div class="item"><strong>Pouso:</strong> ${landingCoords[0].toFixed(4)}, ${landingCoords[1].toFixed(4)}</div>
+          <div class="item"><strong>Distância:</strong> ${distanceValue.textContent}</div>
+          <div class="item"><strong>Tempo de Voo:</strong> ${timeValue.textContent}</div>
+        </div>
+      </div>
+      
+      <div class="section">
+        <h3>Combustível</h3>
+        <div class="grid">
+          <div class="item"><strong>Consumo Planejado:</strong> ${fuelValue.textContent}</div>
+          <div class="item"><strong>Reserva (45min):</strong> ${document.getElementById("fuel-reserve")?.textContent || "N/A"}</div>
+          <div class="item"><strong>Total Necessário:</strong> ${document.getElementById("summary-total-fuel")?.textContent || "N/A"}</div>
+        </div>
+      </div>
+      
+      <div class="section">
+        <h3>Condições Meteorológicas</h3>
+        <div class="grid">
+          <div class="item"><strong>Vento:</strong> ${windValue.textContent}</div>
+          <div class="item"><strong>Visibilidade:</strong> ${document.getElementById("summary-visibility")?.textContent || "N/A"}</div>
+          <div class="item"><strong>Condições VFR:</strong> ${document.getElementById("summary-vfr-conditions")?.textContent || "N/A"}</div>
+        </div>
+      </div>
+      
+      <div style="margin-top: 40px; text-align: center; font-size: 12px; color: #666;">
+        <p><strong>Simulador VFR - Ferramenta Educacional</strong></p>
+        <p>Este plano de voo é apenas para fins educacionais</p>
+      </div>
+    </body>
+    </html>
+  `
+
+  printWindow.document.write(htmlContent)
+  printWindow.document.close()
+  printWindow.focus()
+
+  setTimeout(() => {
+    printWindow.print()
+  }, 500)
+}
+
+function shareFlightPlan() {
+  if (navigator.share) {
+    const departureCoords = departureInput.value
+    const landingCoords = landingInput.value
+    const distance = distanceValue.textContent
+    const time = timeValue.textContent
+
+    navigator
+      .share({
+        title: "Plano de Voo VFR",
+        text: `Plano de Voo VFR\nDecolagem: ${departureCoords}\nPouso: ${landingCoords}\nDistância: ${distance}\nTempo: ${time}`,
+        url: window.location.href,
+      })
+      .catch(console.error)
+  } else {
+    // Fallback for browsers that don't support Web Share API
+    const shareText = `Plano de Voo VFR\nDecolagem: ${departureInput.value}\nPouso: ${landingInput.value}\nDistância: ${distanceValue.textContent}\nTempo: ${timeValue.textContent}`
+
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(shareText).then(() => {
+        alert("Plano de voo copiado para a área de transferência!")
+      })
+    } else {
+      alert("Compartilhamento não suportado neste navegador")
+    }
+  }
+}
+
+// Update the existing displayResults function to include enhanced metrics
+function displayResults(results) {
+  distanceValue.textContent = `${results.distance.toFixed(2)} km`
+  timeValue.textContent = `${results.flightTime.toFixed(2)} horas`
+  fuelValue.textContent = `${results.fuelConsumption.toFixed(2)} L`
+  windValue.textContent = `${results.windInfo.speed.toFixed(1)} m/s, ${results.windInfo.deg.toFixed(0)}°`
+
+  resultsData.style.display = "block"
+  resultsPlaceholder.style.display = "none"
+
+  // Display enhanced metrics and flight summary
+  const departureCoords = departureInput.value.split(",").map(Number)
+  const landingCoords = landingInput.value.split(",").map(Number)
+
+  displayEnhancedMetrics(results, departureCoords, landingCoords)
+  displayFlightSummary(results, departureCoords, landingCoords)
+}
+
+// Update the hideResults function to hide enhanced sections too
 function hideResults() {
   resultsData.style.display = "none"
   resultsPlaceholder.style.display = "block"
+
+  // Hide enhanced metrics and flight summary
+  document.getElementById("enhanced-metrics-data").style.display = "none"
+  document.getElementById("enhanced-metrics-placeholder").style.display = "block"
+  document.getElementById("flight-summary-data").style.display = "none"
+  document.getElementById("flight-summary-placeholder").style.display = "block"
 }
 
 // Show error
@@ -2156,6 +2463,15 @@ document.addEventListener("DOMContentLoaded", () => {
       // Load weather when map markers are placed
     }
   }, 1000)
+
+  // Add these event listeners in the DOMContentLoaded section after the existing ones
+  if (document.getElementById("export-flight-plan")) {
+    document.getElementById("export-flight-plan").addEventListener("click", exportFlightPlan)
+  }
+
+  if (document.getElementById("share-flight-plan")) {
+    document.getElementById("share-flight-plan").addEventListener("click", shareFlightPlan)
+  }
 })
 
 // Handle window resize for map (only if map exists)
