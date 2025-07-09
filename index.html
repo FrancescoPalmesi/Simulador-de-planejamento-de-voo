@@ -1295,6 +1295,271 @@
                             </div>
                         </div>
                     </section>
+                                        <!-- Weight & Balance Section -->
+                    <section class="weight-balance-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 3v18m-4-4h8m-8-8h8"/>
+                                    </svg>
+                                    Peso e Balanceamento
+                                </h2>
+                            </div>
+                            <div class="card-content">
+                                <div class="weight-balance-form">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="empty-weight" class="form-label">Peso Vazio (kg)</label>
+                                            <input type="number" id="empty-weight" class="form-input" value="650" min="0">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="max-weight" class="form-label">Peso Máximo (kg)</label>
+                                            <input type="number" id="max-weight" class="form-input" value="1150" min="0">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="pilot-weight" class="form-label">Peso Piloto (kg)</label>
+                                            <input type="number" id="pilot-weight" class="form-input" value="80" min="0">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="passenger-weight" class="form-label">Peso Passageiros (kg)</label>
+                                            <input type="number" id="passenger-weight" class="form-input" value="0" min="0">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="baggage-weight" class="form-label">Bagagem (kg)</label>
+                                            <input type="number" id="baggage-weight" class="form-input" value="0" min="0">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="fuel-weight" class="form-label">Combustível (kg)</label>
+                                            <input type="number" id="fuel-weight" class="form-input" value="120" min="0">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="weight-balance-results" class="weight-balance-results">
+                                    <div class="weight-summary">
+                                        <div class="weight-item">
+                                            <span class="weight-label">Peso Total:</span>
+                                            <span class="weight-value" id="total-weight">850 kg</span>
+                                        </div>
+                                        <div class="weight-item">
+                                            <span class="weight-label">Margem de Peso:</span>
+                                            <span class="weight-value" id="weight-margin">300 kg</span>
+                                        </div>
+                                        <div class="weight-item">
+                                            <span class="weight-label">Status:</span>
+                                            <span class="weight-value good" id="weight-status">Dentro dos Limites</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Performance Calculations Section -->
+                    <section class="performance-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                                    </svg>
+                                    Cálculos de Performance
+                                </h2>
+                            </div>
+                            <div class="card-content">
+                                <div class="performance-inputs">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="runway-length" class="form-label">Comprimento da Pista (m)</label>
+                                            <input type="number" id="runway-length" class="form-input" value="1200" min="0">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="field-elevation" class="form-label">Elevação do Campo (ft)</label>
+                                            <input type="number" id="field-elevation" class="form-input" value="2000" min="0">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="temperature" class="form-label">Temperatura (°C)</label>
+                                            <input type="number" id="temperature" class="form-input" value="25" min="-50" max="50">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="wind-component" class="form-label">Componente de Vento (kt)</label>
+                                            <input type="number" id="wind-component" class="form-input" value="0" min="-50" max="50">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="performance-results" class="performance-results">
+                                    <div class="performance-grid">
+                                        <div class="performance-item">
+                                            <div class="performance-label">
+                                                <svg class="performance-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4s-2 1-3.5 2.5L11 10l-8.2-1.8c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12.5l-2.5 2.5L5 14l-1.5 1.5L6 18l2.5-2.5L12.5 9l1.8 7.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1Z"/>
+                                                </svg>
+                                                Distância de Decolagem
+                                            </div>
+                                            <div class="performance-value" id="takeoff-distance">850m</div>
+                                        </div>
+                                        <div class="performance-item">
+                                            <div class="performance-label">
+                                                <svg class="performance-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/>
+                                                </svg>
+                                                Distância de Pouso
+                                            </div>
+                                            <div class="performance-value" id="landing-distance">720m</div>
+                                        </div>
+                                        <div class="performance-item">
+                                            <div class="performance-label">
+                                                <svg class="performance-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M12 2v20M2 12h20"/>
+                                                </svg>
+                                                Altitude Densidade
+                                            </div>
+                                            <div class="performance-value" id="density-altitude">3200ft</div>
+                                        </div>
+                                        <div class="performance-item">
+                                            <div class="performance-label">
+                                                <svg class="performance-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                                                </svg>
+                                                Taxa de Subida
+                                            </div>
+                                            <div class="performance-value" id="climb-rate">650 ft/min</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Fuel Planning Section -->
+                    <section class="fuel-planning-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M3 22h18"/>
+                                        <path d="M6 18h12"/>
+                                        <path d="M6 14h12"/>
+                                        <path d="M6 10h12"/>
+                                        <rect x="4" y="6" width="16" height="16" rx="2"/>
+                                    </svg>
+                                    Planejamento Detalhado de Combustível
+                                </h2>
+                            </div>
+                            <div class="card-content">
+                                <div class="fuel-breakdown">
+                                    <div class="fuel-category">
+                                        <h4 class="fuel-category-title">Consumo por Fase de Voo</h4>
+                                        <div class="fuel-phases">
+                                            <div class="fuel-phase">
+                                                <span class="phase-name">Taxi e Decolagem:</span>
+                                                <span class="phase-fuel" id="taxi-fuel">8 L</span>
+                                            </div>
+                                            <div class="fuel-phase">
+                                                <span class="phase-name">Subida:</span>
+                                                <span class="phase-fuel" id="climb-fuel">12 L</span>
+                                            </div>
+                                            <div class="fuel-phase">
+                                                <span class="phase-name">Cruzeiro:</span>
+                                                <span class="phase-fuel" id="cruise-fuel">45 L</span>
+                                            </div>
+                                            <div class="fuel-phase">
+                                                <span class="phase-name">Descida e Pouso:</span>
+                                                <span class="phase-fuel" id="descent-fuel">6 L</span>
+                                            </div>
+                                            <div class="fuel-phase total">
+                                                <span class="phase-name">Total do Voo:</span>
+                                                <span class="phase-fuel" id="total-flight-fuel">71 L</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="fuel-reserves">
+                                        <h4 class="fuel-category-title">Reservas de Combustível</h4>
+                                        <div class="reserve-breakdown">
+                                            <div class="reserve-item">
+                                                <span class="reserve-name">Reserva VFR (45min):</span>
+                                                <span class="reserve-fuel" id="vfr-reserve">15 L</span>
+                                            </div>
+                                            <div class="reserve-item">
+                                                <span class="reserve-name">Contingência (5%):</span>
+                                                <span class="reserve-fuel" id="contingency-fuel">4 L</span>
+                                            </div>
+                                            <div class="reserve-item">
+                                                <span class="reserve-name">Alternativa:</span>
+                                                <span class="reserve-fuel" id="alternate-fuel">12 L</span>
+                                            </div>
+                                            <div class="reserve-item total">
+                                                <span class="reserve-name">Total Necessário:</span>
+                                                <span class="reserve-fuel" id="total-required-fuel">102 L</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Navigation Aids Section -->
+                    <section class="navigation-aids-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+                                    </svg>
+                                    Auxílios à Navegação
+                                </h2>
+                            </div>
+                            <div class="card-content">
+                                <div class="nav-aids-grid">
+                                    <div class="nav-aid-item">
+                                        <div class="nav-aid-header">
+                                            <h4>Checkpoints Recomendados</h4>
+                                        </div>
+                                        <div class="checkpoints-list" id="checkpoints-list">
+                                            <div class="checkpoint-item">
+                                                <span class="checkpoint-name">25% da rota</span>
+                                                <span class="checkpoint-time">15 min</span>
+                                            </div>
+                                            <div class="checkpoint-item">
+                                                <span class="checkpoint-name">50% da rota</span>
+                                                <span class="checkpoint-time">30 min</span>
+                                            </div>
+                                            <div class="checkpoint-item">
+                                                <span class="checkpoint-name">75% da rota</span>
+                                                <span class="checkpoint-time">45 min</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="nav-aid-item">
+                                        <div class="nav-aid-header">
+                                            <h4>Frequências de Emergência</h4>
+                                        </div>
+                                        <div class="emergency-frequencies">
+                                            <div class="frequency-item">
+                                                <span class="freq-name">Emergência Internacional:</span>
+                                                <span class="freq-value">121.5 MHz</span>
+                                            </div>
+                                            <div class="frequency-item">
+                                                <span class="freq-name">Busca e Salvamento:</span>
+                                                <span class="freq-value">123.1 MHz</span>
+                                            </div>
+                                            <div class="frequency-item">
+                                                <span class="freq-name">Controle de Área:</span>
+                                                <span class="freq-value">119.1 MHz</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
 
                     <!-- Flight Summary Card -->
                     <section class="flight-summary-section">

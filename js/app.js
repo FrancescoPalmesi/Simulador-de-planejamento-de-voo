@@ -2626,3 +2626,226 @@ function loadDepartureWeather() {
     fetchWeatherData(coords[0], coords[1], "Local de Decolagem")
   }
 }
+// Weight and Balance calculations
+function calculateWeightBalance() {
+    const emptyWeight = parseFloat(document.getElementById('empty-weight')?.value || 0);
+    const maxWeight = parseFloat(document.getElementById('max-weight')?.value || 0);
+    const pilotWeight = parseFloat(document.getElementById('pilot-weight')?.value || 0);
+    const passengerWeight = parseFloat(document.getElementById('passenger-weight')?.value || 0);
+    const baggageWeight = parseFloat(document.getElementById('baggage-weight')?.value || 0);
+    const fuelWeight = parseFloat(document.getElementById('fuel-weight')?.value || 0);
+
+    const totalWeight = emptyWeight + pilotWeight + passengerWeight + baggageWeight + fuelWeight;
+    const weightMargin = maxWeight - totalWeight;
+    
+    // Update display
+    const totalWeightEl = document.getElementById('total-weight');
+    const weightMarginEl = document.getElementById('weight-margin');
+    const weightStatusEl = document.getElementById('weight-status');
+    
+    if (totalWeightEl) totalWeightEl.textContent = `${totalWeight.toFixed(0)} kg`;
+    if (weightMarginEl) weightMarginEl.textContent = `${weightMargin.toFixed(0)} kg`;
+    
+    if (weightStatusEl) {
+        weightStatusEl.classList.remove('good', 'warning', 'danger');
+        if (weightMargin > 50) {
+            weightStatusEl.textContent = 'Dentro dos Limites';
+            weightStatusEl.classList.add('good');
+        } else if (weightMargin > 0) {
+            weightStatusEl.textContent = 'Próximo ao Limite';
+            weightStatusEl.classList.add('warning');
+        } else {
+            weightStatusEl.textContent = 'Acima do Limite';
+            weightStatusEl.classList.add('danger');
+        }
+    }
+}
+
+// Performance calculations
+function calculatePerformance() {
+    const runwayLength = parseFloat(document.getElementById('runway-length')?.value || 1200);
+    const fieldElevation = parseFloat(document.getElementById('field-elevation')?.value || 0);
+    const temperature = parseFloat(document.getElementById('temperature')?.value || 15);
+    const windComponent = parseFloat(document.getElementById('wind-component')?.value || 0);
+    
+    // Simplified performance calculations (in real world, use actual performance charts)
+    const standardTemp = 15 - (fieldElevation * 0.00198); // Standard temperature at altitude
+    const tempDifference = temperature - standardTemp;
+    const densityAltitude = fieldElevation + (120 * tempDifference);
+    
+    // Base distances (simplified)
+    let baseTakeoffDistance = 600;
+    let baseLandingDistance = 500;
+    
+    // Adjust for density altitude
+    const altitudeFactor = 1 + (densityAltitude * 0.00008);
+    baseTakeoffDistance *= altitudeFactor;
+    baseLandingDistance *= altitudeFactor;
+    
+    // Adjust for wind
+    const windFactor = windComponent > 0 ? (1 - windComponent * 0.02) : (1 + Math.abs(windComponent) * 0.03);
+    const takeoffDistance = baseTakeoffDistance * windFactor;
+    const landingDistance = baseLandingDistance * windFactor;
+    
+    // Calculate climb rate (simplified)
+    const baseClimbRate = 700; // ft/min
+    const climbRate = baseClimbRate * (1 - densityAltitude * 0.00005);
+    
+    // Update display
+    const takeoffEl = document.getElementById('takeoff-distance');
+    const landingEl = document.getElementById('landing-distance');
+    const densityEl = document.getElementById('density-altitude');
+    const climbEl = document.getElementById('climb-rate');
+    
+    if (takeoffEl) takeoffEl.textContent = `${Math.round(takeoffDistance)}m`;
+    if (landingEl) landingEl.textContent = `${Math.round(landingDistance)}m`;
+    if (densityEl) densityEl.textContent = `${Math.round(densityAltitude)}ft`;
+    if (climbEl) climbEl.textContent = `${Math.round(climbRate)} ft/min`;
+}
+
+// Fuel planning calculations
+function calculateDetailedFuel(flightTimeHours, fuelBurnRate) {
+    // Phase-based fuel consumption (simplified)
+    const taxiFuel = 8; // L
+    const climbFuel = Math.max(12, flightTimeHours * 0.2 * fuelBurnRate); // 20% of flight time
+    const cruiseFuel = flightTimeHours * 0.7 * fuelBurnRate; // 70% of flight time
+    const descentFuel = 6; // L
+    
+    const totalFlightFuel = taxiFuel + climbFuel + cruiseFuel + descentFuel;
+    
+    // Reserves
+    const vfrReserve = fuelBurnRate * 0.75; // 45 minutes
+    const contingencyFuel = totalFlightFuel * 0.05; // 5%
+    const alternateFuel = fuelBurnRate * 0.5; // 30 minutes to alternate
+    
+    const totalRequired = totalFlightFuel + vfrReserve + contingencyFuel + alternateFuel;
+    
+    // Update display
+    const elements = {
+        'taxi-fuel': `${taxiFuel.toFixed(0)} L`,
+        'climb-fuel': `${climbFuel.toFixed(0)} L`,
+        'cruise-fuel': `${cruiseFuel.toFixed(0)} L`,
+        'descent-fuel': `${descentFuel.toFixed(0)} L`,
+        'total-flight-fuel': `${totalFlightFuel.toFixed(0)} L`,
+        'vfr-reserve': `${vfrReserve.toFixed(0)} L`,
+        'contingency-fuel': `${contingencyFuel.toFixed(0)} L`,
+        'alternate-fuel': `${alternateFuel.toFixed(0)} L`,
+        'total-required-fuel': `${totalRequired.toFixed(0)} L`
+    };
+    
+    Object.entries(elements).forEach(([id, value]) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
+    });
+}
+
+// Update checkpoints based on flight time
+function updateCheckpoints(flightTimeHours) {
+    const checkpointsList = document.getElementById('checkpoints-list');
+    if (!checkpointsList) return;
+    
+    const totalMinutes = flightTimeHours * 60;
+    const checkpoints = [
+        { name: '25% da rota', time: Math.round(totalMinutes * 0.25) },
+        { name: '50% da rota', time: Math.round(totalMinutes * 0.5) },
+        { name: '75% da rota', time: Math.round(totalMinutes * 0.75) }
+    ];
+    
+    const html = checkpoints.map(cp => `
+        <div class="checkpoint-item">
+            <span class="checkpoint-name">${cp.name}</span>
+            <span class="checkpoint-time">${cp.time} min</span>
+        </div>
+    `).join('');
+    
+    checkpointsList.innerHTML = html;
+}
+
+// Update the existing calculateFlight function to include new metrics
+async function calculateFlight() {
+    if (isLoading) return;
+    setLoading(true);
+    hideError();
+    
+    try {
+        const departureCoords = departureInput.value.split(',').map(Number);
+        const landingCoords = landingInput.value.split(',').map(Number);
+        
+        if (departureCoords.length !== 2 || landingCoords.length !== 2 || 
+            departureCoords.some(isNaN) || landingCoords.some(isNaN)) {
+            throw new Error('Por favor, insira coordenadas válidas!');
+        }
+        
+        const [lat1, lon1] = departureCoords;
+        const [lat2, lon2] = landingCoords;
+        const airspeed = parseFloat(airspeedInput.value);
+        const fuelBurn = parseFloat(fuelBurnInput.value);
+        
+        if (isNaN(airspeed) || airspeed <= 0) {
+            throw new Error('Velocidade deve ser um número positivo!');
+        }
+        if (isNaN(fuelBurn) || fuelBurn <= 0) {
+            throw new Error('Consumo de combustível deve ser um número positivo!');
+        }
+        
+        const distance = calculateDistance(lat1, lon1, lat2, lon2);
+        const flightTime = distance / airspeed;
+        const fuelConsumption = fuelBurn * flightTime;
+        const windInfo = await getWindData(lat1, lon1);
+        
+        displayResults({
+            distance,
+            flightTime,
+            fuelConsumption,
+            windInfo
+        });
+        
+        // Calculate new metrics
+        calculateWeightBalance();
+        calculatePerformance();
+        calculateDetailedFuel(flightTime, fuelBurn);
+        updateCheckpoints(flightTime);
+        
+        // Load weather data for departure location
+        await fetchWeatherData(lat1, lon1, 'Local de Decolagem');
+        
+    } catch (error) {
+        showError(error.message);
+    } finally {
+        setLoading(false);
+    }
+}
+
+// Add event listeners for the new input fields
+document.addEventListener('DOMContentLoaded', () => {
+    // ... existing code ...
+    
+    // Weight and balance inputs
+    const weightInputs = [
+        'empty-weight', 'max-weight', 'pilot-weight', 
+        'passenger-weight', 'baggage-weight', 'fuel-weight'
+    ];
+    
+    weightInputs.forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+            input.addEventListener('input', calculateWeightBalance);
+        }
+    });
+    
+    // Performance inputs
+    const performanceInputs = [
+        'runway-length', 'field-elevation', 'temperature', 'wind-component'
+    ];
+    
+    performanceInputs.forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+            input.addEventListener('input', calculatePerformance);
+        }
+    });
+    
+    // Initialize calculations
+    calculateWeightBalance();
+    calculatePerformance();
+});
