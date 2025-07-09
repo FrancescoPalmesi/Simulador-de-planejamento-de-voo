@@ -378,6 +378,7 @@ let markers = []
 let isLoading = false
 let mapInitialized = false
 let isMapExpanded = false
+// Set initial page to flight-planner
 let currentPage = "flight-planner"
 const seatMap = []
 const passengers = []
@@ -521,17 +522,18 @@ function closeHamburgerMenu() {
 function navigateToPage(page) {
   currentPage = page
 
-  if (page === "seat-calculator") {
+  // Make sure flight-planner is the default page
+  if (page === "flight-planner") {
+    appContainer.classList.remove("slide-left", "slide-center", "slide-right")
+  } else if (page === "seat-calculator") {
     appContainer.classList.add("slide-left")
     appContainer.classList.remove("slide-center", "slide-right")
-  } else if (page === "about") {
+  } else if (page === "aviation-dictionary") {
     appContainer.classList.add("slide-center")
     appContainer.classList.remove("slide-left", "slide-right")
-  } else if (page === "aviation-dictionary") {
+  } else if (page === "about") {
     appContainer.classList.add("slide-right")
     appContainer.classList.remove("slide-left", "slide-center")
-  } else {
-    appContainer.classList.remove("slide-left", "slide-center", "slide-right")
   }
 
   updateActiveNavLink()
@@ -1450,7 +1452,6 @@ function applySafetyClasses(safetyMargin, weatherRisk) {
 }
 
 function exportFlightPlan() {
-  // Create a comprehensive flight plan export
   const printWindow = window.open("", "_blank")
 
   if (!printWindow) {
@@ -1460,62 +1461,190 @@ function exportFlightPlan() {
 
   const departureCoords = departureInput.value.split(",").map(Number)
   const landingCoords = landingInput.value.split(",").map(Number)
+  const currentDate = new Date().toLocaleDateString("pt-BR")
+  const currentTime = new Date().toLocaleTimeString("pt-BR")
+
+  // Get current results
+  const distance = distanceValue.textContent
+  const time = timeValue.textContent
+  const fuel = fuelValue.textContent
+  const wind = windValue.textContent
+
+  // Get enhanced metrics if available
+  const magneticHeading = document.getElementById("magnetic-heading")?.textContent || "N/A"
+  const speedKnots = document.getElementById("speed-knots")?.textContent || "N/A"
+  const recommendedAltitude = document.getElementById("recommended-altitude")?.textContent || "N/A"
+  const fuelReserve = document.getElementById("fuel-reserve")?.textContent || "N/A"
+  const safetyMargin = document.getElementById("safety-margin")?.textContent || "N/A"
+  const weatherRisk = document.getElementById("weather-risk")?.textContent || "N/A"
+
+  // Get weather information
+  const weatherLocation = document.getElementById("current-location")?.textContent || "N/A"
+  const weatherDescription = document.getElementById("current-description")?.textContent || "N/A"
+  const visibility = document.getElementById("current-visibility")?.textContent || "N/A"
+  const vfrConditions = document.getElementById("summary-vfr-conditions")?.textContent || "N/A"
 
   const htmlContent = `
     <!DOCTYPE html>
     <html lang="pt-br">
     <head>
       <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale: 1.0">
-      <title>Plano de Voo VFR - ${new Date().toLocaleDateString("pt-BR")}</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Plano de Voo VFR - ${currentDate}</title>
       <style>
         body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; color: #333; }
         .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #3b82f6; padding-bottom: 20px; }
-        .section { margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; }
-        .section h3 { color: #3b82f6; margin-top: 0; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
-        .item { padding: 8px; background: #f8f9fa; border-radius: 4px; }
-        .item strong { color: #1565c0; }
-        @media print { body { margin: 0; } }
+        .header h1 { color: #3b82f6; margin: 0; font-size: 28px; }
+        .header p { color: #666; margin: 5px 0; }
+        .section { margin-bottom: 25px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; page-break-inside: avoid; }
+        .section h3 { color: #3b82f6; margin-top: 0; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .item { padding: 10px; background: #f8f9fa; border-radius: 4px; border-left: 3px solid #3b82f6; }
+        .item strong { color: #1565c0; display: block; font-size: 14px; }
+        .item span { color: #333; font-size: 16px; }
+        .warning { background: #fff3cd; border-left-color: #ffc107; }
+        .danger { background: #f8d7da; border-left-color: #dc3545; }
+        .success { background: #d4edda; border-left-color: #28a745; }
+        .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; font-size: 12px; color: #666; }
+        .disclaimer { background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .disclaimer strong { color: #856404; }
+        @media print { 
+          body { margin: 0; } 
+          .no-print { display: none; }
+          .section { page-break-inside: avoid; }
+        }
       </style>
     </head>
     <body>
       <div class="header">
-        <h1>Plano de Voo VFR</h1>
-        <p>Gerado em ${new Date().toLocaleString("pt-BR")}</p>
-      </div>
-      
-      <div class="section">
-        <h3>Informações da Rota</h3>
-        <div class="grid">
-          <div class="item"><strong>Decolagem:</strong> ${departureCoords[0].toFixed(4)}, ${departureCoords[1].toFixed(4)}</div>
-          <div class="item"><strong>Pouso:</strong> ${landingCoords[0].toFixed(4)}, ${landingCoords[1].toFixed(4)}</div>
-          <div class="item"><strong>Distância:</strong> ${distanceValue.textContent}</div>
-          <div class="item"><strong>Tempo de Voo:</strong> ${timeValue.textContent}</div>
-        </div>
-      </div>
-      
-      <div class="section">
-        <h3>Combustível</h3>
-        <div class="grid">
-          <div class="item"><strong>Consumo Planejado:</strong> ${fuelValue.textContent}</div>
-          <div class="item"><strong>Reserva (45min):</strong> ${document.getElementById("fuel-reserve")?.textContent || "N/A"}</div>
-          <div class="item"><strong>Total Necessário:</strong> ${document.getElementById("summary-total-fuel")?.textContent || "N/A"}</div>
-        </div>
-      </div>
-      
-      <div class="section">
-        <h3>Condições Meteorológicas</h3>
-        <div class="grid">
-          <div class="item"><strong>Vento:</strong> ${windValue.textContent}</div>
-          <div class="item"><strong>Visibilidade:</strong> ${document.getElementById("summary-visibility")?.textContent || "N/A"}</div>
-          <div class="item"><strong>Condições VFR:</strong> ${document.getElementById("summary-vfr-conditions")?.textContent || "N/A"}</div>
-        </div>
-      </div>
-      
-      <div style="margin-top: 40px; text-align: center; font-size: 12px; color: #666;">
+        <h1>📋 Plano de Voo VFR</h1>
+        <p><strong>Data de Geração:</strong> ${currentDate} às ${currentTime}</p>
         <p><strong>Simulador VFR - Ferramenta Educacional</strong></p>
-        <p>Este plano de voo é apenas para fins educacionais</p>
+      </div>
+      
+      <div class="section">
+        <h3>🗺️ Informações da Rota</h3>
+        <div class="grid">
+          <div class="item">
+            <strong>Ponto de Decolagem:</strong>
+            <span>${departureCoords[0]?.toFixed(4) || "N/A"}, ${departureCoords[1]?.toFixed(4) || "N/A"}</span>
+          </div>
+          <div class="item">
+            <strong>Ponto de Pouso:</strong>
+            <span>${landingCoords[0]?.toFixed(4) || "N/A"}, ${landingCoords[1]?.toFixed(4) || "N/A"}</span>
+          </div>
+          <div class="item">
+            <strong>Distância Total:</strong>
+            <span>${distance}</span>
+          </div>
+          <div class="item">
+            <strong>Tempo de Voo Estimado:</strong>
+            <span>${time}</span>
+          </div>
+          <div class="item">
+            <strong>Proa Magnética:</strong>
+            <span>${magneticHeading}</span>
+          </div>
+          <div class="item">
+            <strong>Velocidade Planejada:</strong>
+            <span>${speedKnots}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="section">
+        <h3>⛽ Planejamento de Combustível</h3>
+        <div class="grid">
+          <div class="item">
+            <strong>Consumo Estimado:</strong>
+            <span>${fuel}</span>
+          </div>
+          <div class="item">
+            <strong>Reserva de Combustível:</strong>
+            <span>${fuelReserve}</span>
+          </div>
+          <div class="item ${safetyMargin.includes("50") ? "success" : safetyMargin.includes("25") ? "warning" : "danger"}">
+            <strong>Margem de Segurança:</strong>
+            <span>${safetyMargin}</span>
+          </div>
+          <div class="item">
+            <strong>Altitude Recomendada:</strong>
+            <span>${recommendedAltitude}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="section">
+        <h3>🌤️ Condições Meteorológicas</h3>
+        <div class="grid">
+          <div class="item">
+            <strong>Localização:</strong>
+            <span>${weatherLocation}</span>
+          </div>
+          <div class="item">
+            <strong>Condições Atuais:</strong>
+            <span>${weatherDescription}</span>
+          </div>
+          <div class="item">
+            <strong>Vento:</strong>
+            <span>${wind}</span>
+          </div>
+          <div class="item">
+            <strong>Visibilidade:</strong>
+            <span>${visibility}</span>
+          </div>
+          <div class="item">
+            <strong>Condições VFR:</strong>
+            <span>${vfrConditions}</span>
+          </div>
+          <div class="item ${weatherRisk === "Baixo" ? "success" : weatherRisk === "Moderado" ? "warning" : "danger"}">
+            <strong>Risco Meteorológico:</strong>
+            <span>${weatherRisk}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="section">
+        <h3>✅ Lista de Verificação Pré-Voo</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+          <div class="item">
+            <strong>□ Documentação</strong>
+            <span>CHT, CMA, Certificado de Aeronavegabilidade</span>
+          </div>
+          <div class="item">
+            <strong>□ Planejamento</strong>
+            <span>Cartas atualizadas, NOTAM, Meteorologia</span>
+          </div>
+          <div class="item">
+            <strong>□ Combustível</strong>
+            <span>Verificar quantidade e qualidade</span>
+          </div>
+          <div class="item">
+            <strong>□ Equipamentos</strong>
+            <span>Rádio, Transponder, Instrumentos</span>
+          </div>
+          <div class="item">
+            <strong>□ Inspeção Externa</strong>
+            <span>Estrutura, hélice, superfícies de controle</span>
+          </div>
+          <div class="item">
+            <strong>□ Passageiros</strong>
+            <span>Briefing de segurança, cintos, portas</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="disclaimer">
+        <strong>⚠️ AVISO IMPORTANTE:</strong> Este plano de voo foi gerado por uma ferramenta educacional e NÃO deve ser usado para operações reais de voo. Sempre consulte fontes oficiais, cartas aeronáuticas atualizadas e serviços meteorológicos certificados para planejamento real de voo.
+      </div>
+      
+      <div class="footer">
+        <p><strong>Simulador VFR - Ferramenta Educacional de Aviação</strong></p>
+        <p>Desenvolvido para fins educacionais • Não use para operações reais de voo</p>
+        <div class="no-print" style="margin-top: 20px;">
+          <button onclick="window.print()" style="background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-right: 10px;">🖨️ Imprimir / Salvar PDF</button>
+          <button onclick="window.close()" style="background: #6b7280; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">❌ Fechar</button>
+        </div>
       </div>
     </body>
     </html>
@@ -2273,6 +2402,7 @@ document.addEventListener("DOMContentLoaded", () => {
     navClose.addEventListener("click", closeHamburgerMenu)
   }
 
+  // Updated navigation order: VFR Simulator first
   if (navFlightPlanner) {
     navFlightPlanner.addEventListener("click", () => navigateToPage("flight-planner"))
   }
@@ -2281,7 +2411,10 @@ document.addEventListener("DOMContentLoaded", () => {
     navSeatCalculator.addEventListener("click", () => navigateToPage("seat-calculator"))
   }
 
-  // Add this after the existing navigation event listeners
+  if (navAviationDictionary) {
+    navAviationDictionary.addEventListener("click", () => navigateToPage("aviation-dictionary"))
+  }
+
   if (navAbout) {
     navAbout.addEventListener("click", () => navigateToPage("about"))
   }
@@ -2472,6 +2605,10 @@ document.addEventListener("DOMContentLoaded", () => {
   if (document.getElementById("share-flight-plan")) {
     document.getElementById("share-flight-plan").addEventListener("click", shareFlightPlan)
   }
+
+  // Set initial page and update navigation
+  currentPage = "flight-planner"
+  updateActiveNavLink()
 })
 
 // Handle window resize for map (only if map exists)
@@ -2482,3 +2619,10 @@ window.addEventListener("resize", () => {
     }, 100)
   }
 })
+
+function loadDepartureWeather() {
+  const coords = departureInput.value.split(",").map(Number)
+  if (coords.length === 2 && !isNaN(coords[0]) && !isNaN(coords[1])) {
+    fetchWeatherData(coords[0], coords[1], "Local de Decolagem")
+  }
+}
